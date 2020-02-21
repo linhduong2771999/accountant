@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import "./Sidebar.scss";
 import { Layout, Menu, Icon, Breadcrumb, Avatar } from "antd";
 
 const { Header, Sider, Content, Footer } = Layout;
