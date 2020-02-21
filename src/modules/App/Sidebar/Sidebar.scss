@@ -1,0 +1,20 @@
+@import "../../../assets/scss/constants/variables.constant.scss";
+.logo-user {
+  width: 100%;
+  padding: 5% 10% 5% 10%;
+  font-size: 0.9em;
+  color: $text-color-white;
+  display: flex;
+  flex-direction: row;
+  .user-name {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+    p {
+      margin-bottom: 0;
+      font-size: 1.25em;
+      letter-spacing: 1px;
+      color: #2e97f8;
+    }
+  }
+}
