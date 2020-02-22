@@ -15,6 +15,18 @@
       font-size: 1.25em;
       letter-spacing: 1px;
       color: #2e97f8;
+      &:hover{
+        cursor: pointer;
+      }
     }
+  }
+}
+
+.setting-icon{
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  &:hover{
+    color: $text-color-blue;
+    cursor: pointer;
   }
 }

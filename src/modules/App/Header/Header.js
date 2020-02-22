@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { PageHeader, Button } from 'antd';
+import {Link} from "react-router-dom";
 import Logo from "../../../assets/img/logo.jpg";
 class Header extends Component {
     render() {
@@ -13,7 +14,11 @@ class Header extends Component {
                 width: "100%"
             }}
             ghost={false}
-            title="ACCOUNTING"
+            title={
+                <Link to="/" style={{color: "black"}}>
+                    ACCOUNTING
+                </Link>
+            }
             avatar={{ src: Logo }}
             extra={[
                 <Button key="1" type="primary">Log out</Button>
