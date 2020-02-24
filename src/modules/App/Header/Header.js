@@ -20,9 +20,9 @@ class Header extends Component {
                 </Link>
             }
             avatar={{ src: Logo }}
-            extra={[
-                <Button key="1" type="primary">Log out</Button>
-            ]}
+            // extra={[
+            //     <Button key="1" type="primary">Log out</Button>
+            // ]}
             />
         );
     }

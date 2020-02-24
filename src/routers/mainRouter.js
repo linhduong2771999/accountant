@@ -7,6 +7,7 @@ import UserManager from "../modules/UserManager/UserManager";
 import PageNotFound from "../modules/PageNotFound/PageNotFound";
 import Dashboard from "../modules/Home/Dashboard";
 import WorkManager from "../modules/WorkManager/WorkManager";
+import Notification from "../modules/Notification/Notification";
 
 const Router = (
   <Switch>
@@ -15,6 +16,7 @@ const Router = (
     <Route exact path={path.accounting} component={Accounting} />
     <Route exact path={path.userManager} component={UserManager} />
     <Route path={path.userList} exact component={UserList} />
+    <Route path={path.notification} exact component={Notification} />
     <Route exact path="*" component={PageNotFound} />
   </Switch>
 );

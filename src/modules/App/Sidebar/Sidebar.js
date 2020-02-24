@@ -93,6 +93,12 @@ class Sidebar extends Component {
               <span>Danh sách nhân viên</span>
             </Link>
           </Menu.Item>
+          <Menu.Item key="6">
+            <Link to="/notification">
+              <Icon type="notification" />
+              <span>Bảng thông báo</span>
+            </Link>
+          </Menu.Item>
         </Menu>
       </Sider>
     );
