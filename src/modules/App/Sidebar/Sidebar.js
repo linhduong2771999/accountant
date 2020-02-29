@@ -14,7 +14,8 @@ class Sidebar extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      collapsed: false
+      collapsed: false,
+      onActiveKey: ""
     };
   }
 
@@ -28,8 +29,10 @@ class Sidebar extends Component {
       }
     );
   };
+
   render() {
     const { collapsed } = this.state;
+    console.log(this.props)
     return (
       <Sider
         style={{
@@ -61,7 +64,7 @@ class Sidebar extends Component {
             </div>
           )}
         </div>
-        <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
+        <Menu theme="dark" defaultSelectedKeys={this.state.onActiveKey} mode="inline">
           <Menu.Item key="1">
             <Link to="/">
               <Icon type="pie-chart" />
