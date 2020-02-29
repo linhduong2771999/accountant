@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { PageHeader, Button } from 'antd';
+import { PageHeader } from 'antd';
 import {Link} from "react-router-dom";
 import Logo from "../../../assets/img/logo.jpg";
 class Header extends Component {

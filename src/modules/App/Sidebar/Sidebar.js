@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import { Layout, Menu, Icon, Avatar, Tooltip, Button } from "antd";
+import {withRouter, Link } from "react-router-dom";
+// import { } from "react-router";
+import { Layout, Menu, Icon, Avatar, Tooltip } from "antd";
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
@@ -9,13 +10,12 @@ const settingIcon = (
   <span className="setting-icon">
     Setting <Icon type="setting" />
   </span>
-);
+)
 class Sidebar extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      collapsed: false,
-      onActiveKey: ""
+      collapsed: false
     };
   }
 
@@ -29,10 +29,10 @@ class Sidebar extends Component {
       }
     );
   };
-
+  
   render() {
     const { collapsed } = this.state;
-    console.log(this.props)
+    const { location } = this.props;
     return (
       <Sider
         style={{
@@ -62,13 +62,27 @@ class Sidebar extends Component {
                 </p>
               </Tooltip>
             </div>
-          )}
+          )}  
         </div>
-        <Menu theme="dark" defaultSelectedKeys={this.state.onActiveKey} mode="inline">
-          <Menu.Item key="1">
+        <Menu
+          theme="dark"
+          defaultSelectedKeys={[location.pathname]}
+          selectedKeys={[location.pathname]}
+          defaultOpenKeys={
+            (
+              location.pathname === "/accounting" ||
+              location.pathname === "/user_manager" || 
+              location.pathname === "/work_manager"
+            )
+              ? ["sub1"]
+              : ""
+          }
+          mode="inline"
+        >
+          <Menu.Item key="/">
             <Link to="/">
               <Icon type="pie-chart" />
-              <span>Bảng điều khiển</span>
+              <span>Bảng điều khiển  </span>
             </Link>
           </Menu.Item>
           <SubMenu
@@ -80,23 +94,23 @@ class Sidebar extends Component {
               </span>
             }
           >
-            <Menu.Item key="2">
+            <Menu.Item key="/accounting">
               <Link to="/accounting">Quản lý kế toán</Link>
             </Menu.Item>
-            <Menu.Item key="3">
+            <Menu.Item key="/user_manager">
               <Link to="/user_manager">Quản lý người dùng</Link>
             </Menu.Item>
-            <Menu.Item key="4">
+            <Menu.Item key="/work_manager">
               <Link to="/work_manager">Quản lý công việc</Link>
             </Menu.Item>
           </SubMenu>
-          <Menu.Item key="5">
+          <Menu.Item key="/user_list">
             <Link to="/user_list">
               <Icon type="team" />
               <span>Danh sách nhân viên</span>
             </Link>
           </Menu.Item>
-          <Menu.Item key="6">
+          <Menu.Item key="/notification">
             <Link to="/notification">
               <Icon type="notification" />
               <span>Bảng thông báo</span>
@@ -108,4 +122,4 @@ class Sidebar extends Component {
   }
 }
 
-export default Sidebar;
+export default withRouter(Sidebar);
