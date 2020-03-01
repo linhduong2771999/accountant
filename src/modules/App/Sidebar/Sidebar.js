@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import {withRouter, Link } from "react-router-dom";
-// import { } from "react-router";
 import { Layout, Menu, Icon, Avatar, Tooltip } from "antd";
 
 const { Sider } = Layout;
@@ -43,7 +42,7 @@ class Sidebar extends Component {
           marginTop: "65px"
         }}
         collapsible
-        collapsed={collapsed}
+        breakpoint={"md"}
         onCollapse={this.onCollapse}
       >
         <div
@@ -66,8 +65,9 @@ class Sidebar extends Component {
         </div>
         <Menu
           theme="dark"
-          defaultSelectedKeys={[location.pathname]}
+          mode="inline"
           selectedKeys={[location.pathname]}
+          defaultSelectedKeys={[location.pathname]}
           defaultOpenKeys={
             (
               location.pathname === "/accounting" ||
@@ -77,7 +77,6 @@ class Sidebar extends Component {
               ? ["sub1"]
               : ""
           }
-          mode="inline"
         >
           <Menu.Item key="/">
             <Link to="/">

@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from "react";
 import ChartistGraph from "react-chartist";
-
 const simpleLineChartData = {
   labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
   series: [
@@ -87,10 +86,10 @@ class Dashboard extends Component {
                 <div className="card">
                   <div className="card-body">
                     <div className="row">
-                      <div className="col-lg-5 col-sm-5 col-xs-12 text-center">
+                      <div className="col-lg-5 col-sm-5 col-6 icon-responsive">
                         <i className="fa fa-database fa-3x text-warning"></i>
                       </div>
-                      <div className="col-lg-7 col-sm-7 col-xs-12">
+                      <div className="col-lg-7 col-sm-7 col-6">
                         <div className="text-right">
                           <p className="my-0">Capacity</p>
                           <h3 className="my-0">105GB</h3>
@@ -107,14 +106,14 @@ class Dashboard extends Component {
                   </div>
                 </div>
               </div>
-              <div className="col-xl-3 col-md-6 col-xs-12">
+              <div className="col-xl-3 col-md-6 col-xs-12 ">
                 <div className="card">
                   <div className="card-body">
                     <div className="row">
-                      <div className="col-lg-5 col-sm-5 col-xs-12 text-center">
+                      <div className="col-lg-5 col-sm-5 col-6 icon-responsive">
                         <i className="fa fa-google-wallet fa-3x text-warning"></i>
                       </div>
-                      <div className="col-lg-7 col-sm-7 col-xs-12">
+                      <div className="col-lg-7 col-sm-7 col-6">
                         <div className="text-right">
                           <p className="my-0">Revenue</p>
                           <h3 className="my-0">$1.345</h3>
@@ -131,14 +130,14 @@ class Dashboard extends Component {
                   </div>
                 </div>
               </div>
-              <div className="col-xl-3 col-md-6 col-xs-12">
+              <div className="col-xl-3 col-md-6 col-xs-12 ">
                 <div className="card">
                   <div className="card-body">
                     <div className="row">
-                      <div className="col-lg-5 col-sm-5 col-xs-12 text-center">
+                      <div className="col-lg-5 col-sm-5 col-6 icon-responsive">
                         <i className="fa fa-book fa-3x text-warning"></i>
                       </div>
-                      <div className="col-lg-7 col-sm-7 col-xs-12">
+                      <div className="col-lg-7 col-sm-7 col-6">
                         <div className="text-right">
                           <p className="my-0">Errors</p>
                           <h3 className="my-0">20</h3>
@@ -155,14 +154,14 @@ class Dashboard extends Component {
                   </div>
                 </div>
               </div>
-              <div className="col-xl-3 col-md-6 col-xs-12">
+              <div className="col-xl-3 col-md-6 col-xs-12 ">
                 <div className="card">
                   <div className="card-body">
                     <div className="row">
-                      <div className="col-lg-5 col-sm-5 col-xs-12 text-center">
+                      <div className="col-lg-5 col-sm-5 col-6 icon-responsive">
                         <i className="fa fa-twitter fa-3x text-warning"></i>
                       </div>
-                      <div className="col-lg-7 col-sm-7 col-xs-12">
+                      <div className="col-lg-7 col-sm-7 col-6">
                         <div className="text-right">
                           <p className="my-0">Followers</p>
                           <h3 className="my-0">+30</h3>

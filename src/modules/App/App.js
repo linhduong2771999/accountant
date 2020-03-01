@@ -29,7 +29,7 @@ export default class AppIndex extends Component {
           <Sidebar onCollapse={collapsed => this.onCollapse(collapsed)} />
           <Layout
             style={{
-              marginLeft: collapsed ? 80 : 200,
+              marginLeft: !collapsed ? 200 : 80,
               transition: "all 0.3s ease"
             }}
           >

@@ -1,0 +1,17 @@
+@import "../../assets/scss/constants/variables.constant.scss";
+@import "../../assets/scss/constants/responsive.constant.scss";
+
+.card-body{
+    .row{
+        .icon-responsive{
+            @include responsive(MD){
+              text-align: center;
+            }
+          }
+        
+    }
+}
+
+// .text-responsive{
+//     text-align: left;
+// }
