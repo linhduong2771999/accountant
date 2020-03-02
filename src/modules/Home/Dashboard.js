@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from "react";
 import ChartistGraph from "react-chartist";
 const simpleLineChartData = {
-  labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+  labels: ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6"],
   series: [
     [12, 9, 7, 8, 5],
     [2, 1, 3.5, 7, 3],
@@ -91,8 +91,8 @@ class Dashboard extends Component {
                       </div>
                       <div className="col-lg-7 col-sm-7 col-6">
                         <div className="text-right">
-                          <p className="my-0">Capacity</p>
-                          <h3 className="my-0">105GB</h3>
+                          <p className="my-0">Tổng dung lượng</p>
+                          <h3 className="my-0 font-xs-responsive">105GB</h3>
                         </div>
                       </div>
                     </div>
@@ -100,7 +100,7 @@ class Dashboard extends Component {
                     <div className="card-footer p-0">
                         <div className="text-left text-secondary">
                           <i className="fa fa-refresh"></i>
-                          &nbsp; Update now
+                          &nbsp; Vừa cập nhật
                         </div>
                     </div>
                   </div>
@@ -115,8 +115,8 @@ class Dashboard extends Component {
                       </div>
                       <div className="col-lg-7 col-sm-7 col-6">
                         <div className="text-right">
-                          <p className="my-0">Revenue</p>
-                          <h3 className="my-0">$1.345</h3>
+                          <p className="my-0">Doanh thu</p>
+                          <h3 className="my-0 font-xs-responsive">$1.345</h3>
                         </div>
                       </div>
                     </div>
@@ -124,7 +124,7 @@ class Dashboard extends Component {
                     <div className="card-footer p-0">
                         <div className="text-left text-secondary">
                           <i className="fa fa-calendar"></i>
-                          &nbsp; Last day
+                          &nbsp; Hôm qua
                         </div>
                     </div>
                   </div>
@@ -139,8 +139,8 @@ class Dashboard extends Component {
                       </div>
                       <div className="col-lg-7 col-sm-7 col-6">
                         <div className="text-right">
-                          <p className="my-0">Errors</p>
-                          <h3 className="my-0">20</h3>
+                          <p className="my-0">Số lỗi</p>
+                          <h3 className="my-0 font-xs-responsive">20</h3>
                         </div>
                       </div>
                     </div>
@@ -148,7 +148,7 @@ class Dashboard extends Component {
                     <div className="card-footer p-0">
                         <div className="text-left text-secondary">
                           <i className="fa fa-clock-o"></i>
-                          &nbsp; In the last hour
+                          &nbsp; 1 giờ trước
                         </div>
                     </div>
                   </div>
@@ -163,8 +163,8 @@ class Dashboard extends Component {
                       </div>
                       <div className="col-lg-7 col-sm-7 col-6">
                         <div className="text-right">
-                          <p className="my-0">Followers</p>
-                          <h3 className="my-0">+30</h3>
+                          <p className="my-0">Người theo dõi</p>
+                          <h3 className="my-0 font-xs-responsive">+30</h3>
                         </div>
                       </div>
                     </div>
@@ -172,7 +172,7 @@ class Dashboard extends Component {
                     <div className="card-footer p-0">
                         <div className="text-left text-secondary">
                           <i className="fa fa-twitter"></i>
-                          &nbsp; Update now
+                          &nbsp; Vừa cập nhật
                         </div>
                     </div>
                   </div>
@@ -183,8 +183,8 @@ class Dashboard extends Component {
               <div className="col-md-4 col-sm-12">
                 <div className="card">
                   <div className="card-header ">
-                    <h4 className="card-title">Email Statistics</h4>
-                    <p className="card-category">Last Campaign Performance</p>
+                    <h4 className="card-title">Thống kê Email</h4>
+                    <p className="card-category">Biểu đồ hiệu suất mới nhất</p>
                   </div>
                   <div className="card-body">
                     <div
@@ -204,7 +204,7 @@ class Dashboard extends Component {
                     </div>
                     <hr />
                     <div className="stats">
-                      <i className="fa fa-clock-o"></i> Campaign sent 2 days ago
+                      <i className="fa fa-clock-o"></i>Cập nhật từ doanh trại 2 ngày trước
                     </div>
                   </div>
                 </div>
@@ -212,8 +212,8 @@ class Dashboard extends Component {
               <div className="col-md-8 col-sm-12">
                 <div className="card ">
                   <div className="card-header ">
-                    <h4 className="card-title">Users Behavior</h4>
-                    <p className="card-category">24 Hours performance</p>
+                    <h4 className="card-title">Hành vi người dùng</h4>
+                    <p className="card-category">Hiệu suất trong 24 giờ</p>
                   </div>
                   <div className="card-body ">
                     <div id="chartHours" className="ct-chart">
@@ -233,7 +233,7 @@ class Dashboard extends Component {
                     </div>
                     <hr />
                     <div className="stats">
-                      <i className="fa fa-history"></i> Updated 3 minutes ago
+                      <i className="fa fa-history"></i> Cập nhật 3 phút trước
                     </div>
                   </div>
                 </div>
@@ -275,8 +275,8 @@ class Dashboard extends Component {
               <div className="col-md-6 col-sm-12">
                 <div className="card  card-tasks">
                   <div className="card-header ">
-                    <h4 className="card-title">Tasks</h4>
-                    <p className="card-category">Backend development</p>
+                    <h4 className="card-title">Công việc được giao</h4>
+                    <p className="card-category"> Lập trình viên Backend </p>
                   </div>
                   <div className="card-body ">
                     <div className="table-full-width">

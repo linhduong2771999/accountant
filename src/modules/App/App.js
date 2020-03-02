@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import {withRouter} from "react-router-dom";
 import HeaderIndex from "./Header/Header";
 import Sidebar from "./Sidebar/Sidebar";
 import RouterMain from "../../routers/mainRouter";
@@ -6,7 +7,7 @@ import { Layout, Breadcrumb } from "antd";
 
 const { Header, Content, Footer } = Layout;
 
-export default class AppIndex extends Component {
+class AppIndex extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -21,7 +22,7 @@ export default class AppIndex extends Component {
   };
   render() {
     const { collapsed } = this.state;
-
+    const { location } = this.props;
     return (
       <div>
         <HeaderIndex />
@@ -36,7 +37,7 @@ export default class AppIndex extends Component {
             <Header style={{ background: "#fff", padding: 0 }} />
             <Content style={{ margin: "0 16px" }}>
               <Breadcrumb style={{ margin: "16px 0" }}>
-                 <Breadcrumb.Item>Welcome</Breadcrumb.Item>
+                 <Breadcrumb.Item>Welcome {location.pathname.split("/")}</Breadcrumb.Item>
               </Breadcrumb>
               <div style={{ padding: 24, background: "#fff", minHeight: 360 }}>
                   {RouterMain}
@@ -51,3 +52,5 @@ export default class AppIndex extends Component {
     );
   }
 }
+
+export default withRouter(AppIndex);

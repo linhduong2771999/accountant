@@ -71,7 +71,7 @@ class Sidebar extends Component {
           defaultOpenKeys={
             (
               location.pathname === "/accounting" ||
-              location.pathname === "/user_manager" || 
+              location.pathname === "/user_manager" ||  
               location.pathname === "/work_manager"
             )
               ? ["sub1"]
