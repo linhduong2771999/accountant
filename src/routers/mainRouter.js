@@ -8,15 +8,16 @@ import PageNotFound from "../modules/PageNotFound/PageNotFound";
 import Dashboard from "../modules/Home/Dashboard";
 import WorkManager from "../modules/WorkManager/WorkManager";
 import Notification from "../modules/Notification/Notification";
-
+import NotificationManager from "../modules/NotificationManager/NotificationManager";
 const Router = (
   <Switch>
     <Route exact path={path.home} component={Dashboard} />
     <Route exact path={path.workManager} component={WorkManager} />
     <Route exact path={path.accounting} component={Accounting} />
     <Route exact path={path.userManager} component={UserManager} />
-    <Route path={path.userList} exact component={UserList} />
-    <Route path={path.notification} exact component={Notification} />
+    <Route exact path={path.userList}  component={UserList} />
+    <Route exact path={path.notification} component={Notification} />
+    <Route exact path={path.notificationManager} component={NotificationManager} />
     <Route exact path="*" component={PageNotFound} />
   </Switch>
 );

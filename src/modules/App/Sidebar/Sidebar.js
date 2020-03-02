@@ -72,7 +72,8 @@ class Sidebar extends Component {
             (
               location.pathname === "/accounting" ||
               location.pathname === "/user_manager" ||  
-              location.pathname === "/work_manager"
+              location.pathname === "/work_manager" ||
+              location.pathname === "/notification_manager" 
             )
               ? ["sub1"]
               : ""
@@ -101,6 +102,9 @@ class Sidebar extends Component {
             </Menu.Item>
             <Menu.Item key="/work_manager">
               <Link to="/work_manager">Quản lý công việc</Link>
+            </Menu.Item>
+            <Menu.Item key="/notification_manager">
+              <Link to="/notification_manager">Quản lý thông báo</Link>
             </Menu.Item>
           </SubMenu>
           <Menu.Item key="/user_list">
