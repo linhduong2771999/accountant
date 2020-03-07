@@ -1,14 +1,15 @@
-// import React from "react";
-// import { BrowserRouter, Route, Switch} from "react-router-dom";
-// import App from "../App";
+import React from "react";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
+import App from "../App";
+import Login from "../modules/Login/Login";
 
-// const RouterIndex = (
-//     <BrowserRouter>
-//         <Switch>
-//             <Route exact path="/" component={App} />
-//         </Switch>
-//     </BrowserRouter>
-// );
+const RouterIndex = (
+  <BrowserRouter>
+    <Switch>
+      <Route path="/login" component={Login} />
+      <Route  path="/" component={App} />
+    </Switch>
+  </BrowserRouter>
+);
 
-
-// export default RouterIndex;
+export default RouterIndex;
