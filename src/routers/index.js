@@ -6,7 +6,7 @@ import Login from "../modules/Login/Login";
 const RouterIndex = (
   <BrowserRouter>
     <Switch>
-      <Route path="/login" component={Login} />
+      <Route exact path="/login" component={Login} />
       <Route  path="/" component={App} />
     </Switch>
   </BrowserRouter>

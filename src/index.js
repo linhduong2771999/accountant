@@ -1,11 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter } from "react-router-dom";
 import * as serviceWorker from "./serviceWorker";
 import createStore from "./store";
 import { Provider } from "react-redux";
 import RouterIndex from "./routers/index";
-import App from "./App";
 export const { store } = createStore();
 
 ReactDOM.render(

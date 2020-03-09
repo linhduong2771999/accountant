@@ -1,27 +1,29 @@
-import React, { Fragment } from "react";
+import React, { Suspense, lazy } from "react";
 import { Switch, Route } from "react-router-dom";
 import * as path from "./path";
-import Accounting from "../modules/Accounting/Accounting";
-import UserList from "../modules/UserList/UserList";
-import UserManager from "../modules/UserManager/UserManager";
-import PageNotFound from "../modules/PageNotFound/PageNotFound";
-import Dashboard from "../modules/Home/Dashboard";
-import WorkManager from "../modules/WorkManager/WorkManager";
-import Notification from "../modules/Notification/Notification";
-import NotificationManager from "../modules/NotificationManager/NotificationManager";
-import Login from "../modules/Login/Login";
+
+const Accounting = lazy(() => import("../modules/Accounting/Accounting"));
+const UserList = lazy(() => import("../modules/UserList/UserList"));
+const UserManager = lazy(() => import("../modules/UserManager/UserManager"));
+const PageNotFound = lazy(() => import("../modules/PageNotFound/PageNotFound"));
+const Dashboard = lazy(() => import("../modules/Home/Dashboard"));
+const WorkManager = lazy(() => import("../modules/WorkManager/WorkManager"));
+const Notification = lazy(() => import("../modules/Notification/Notification"));
+const NotificationManager = lazy(() => import("../modules/NotificationManager/NotificationManager"));
+
 const Router = (
-  <Switch>
-    <Route exact path={path.home} component={Dashboard} />
-    <Route exact path={path.workManager} component={WorkManager} />
-    <Route exact path={path.accounting} component={Accounting} />
-    <Route exact path={path.userManager} component={UserManager} />
-    <Route exact path={path.userList}  component={UserList} />
-    <Route exact path={path.notification} component={Notification} />
-    <Route exact path={path.notificationManager} component={NotificationManager} />
-    <Route exact path={path.login} component={Login} />
-    <Route exact path="*" component={PageNotFound} />
-  </Switch>
+  <Suspense fallback={<div>Loading...</div>}>
+    <Switch>
+      <Route exact path={path.home} component={Dashboard} />
+      <Route exact path={path.workManager} component={WorkManager} />
+      <Route exact path={path.accounting} component={Accounting} />
+      <Route exact path={path.userManager} component={UserManager} />
+      <Route exact path={path.userList}  component={UserList} />
+      <Route exact path={path.notification} component={Notification} />
+      <Route exact path={path.notificationManager} component={NotificationManager} />
+      <Route path="*" component={PageNotFound} />
+    </Switch>
+  </Suspense>
 );
 
 export default Router;
