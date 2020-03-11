@@ -1,10 +1,14 @@
 import React, { Component, Fragment } from 'react';
-
+import callAPI from "../../helpers/callAPI";
 class Accounting extends Component {
+
+    componentDidMount = () => {
+        callAPI("products", "GET", null);
+    }
     render() {
         return (
             <Fragment>
-                Trang quản lý kế toán !!!
+                <button>Click to get API.</button>
             </Fragment>
         );
     }
