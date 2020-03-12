@@ -27,9 +27,9 @@ class Login extends Component {
         var errorCode = error.code;
         // var errorMessage = error.message;
         if (errorCode === "auth/wrong-password") {
-          alert("Wrong password.");
-        } else {
           alert("Sai mật khẩu hoặc tài khoản !!!");
+        } else {
+          alert("Tài khoản không tồn tại !!!");
         }
         console.log(error);
       });

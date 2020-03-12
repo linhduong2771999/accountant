@@ -1,18 +1,7 @@
 import React, { Component } from 'react';
 import {Redirect, Route} from "react-router-dom";
 import {withRouter} from "react-router-dom";
-const fakeAuth = {
-    isAuthenticated: false,
-    authenticate(cb) {
-      this.isAuthenticated = true
-      setTimeout(cb, 100)
-    },
-    signout(cb) {
-      this.isAuthenticated = false
-      setTimeout(cb, 100)
-    }
-  }
-
+import {fakeAuth} from "../config/Auth.config";
 class ScrollToTopAndPrivateRoute extends Component {
     componentDidUpdate(prevProps) {
         if (
