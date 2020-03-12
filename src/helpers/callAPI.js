@@ -1,5 +1,4 @@
 import axios from "axios";
-const accessToken = "   aMW7qulLyOD0hkmWzHOsaP13yxeXQYjjkWoIH2k5"
 export default function callAPI(
   endpoint,
   method = "GET",
