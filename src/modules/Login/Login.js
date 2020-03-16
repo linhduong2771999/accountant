@@ -1,15 +1,30 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import { Input, Checkbox, Button } from "antd";
 import Firebase from "../../config/FirebaseClient";
+import { authActions } from "../../actions/index";
 class Login extends Component {
+  _isMounted = false;
   constructor(props) {
     super(props);
     this.state = {
       email: "",
-      password: ""
+      password: "",
+      user: false,
     };
   }
+
+  componentDidMount = () => {
+    this.authStateChanged();
+    this._isMounted = true;
+  };
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
   onChange = event => {
     const { name, value } = event.target;
     this.setState({
@@ -17,12 +32,12 @@ class Login extends Component {
     });
   };
 
-  onSubmit = (event) => {
+  onSubmit = event => {
     const { email, password } = this.state;
     event.preventDefault();
-    Firebase
-      .auth()
+    Firebase.auth()
       .signInWithEmailAndPassword(email, password)
+      .then((u) => {})
       .catch(error => {
         var errorCode = error.code;
         // var errorMessage = error.message;
@@ -33,20 +48,35 @@ class Login extends Component {
         }
         console.log(error);
       });
-  };  
-  logout = () => {
-    Firebase.auth().signOut();
-  }
+  };
+
+  authStateChanged = () => {
+    Firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        // this.props.actions.loginAccountSuccess(true);
+        if(this._isMounted){
+          this.setState({
+            user
+          });
+        }
+        
+        console.log("Login successfully.");
+      } else {
+        if(this._isMounted){
+        this.setState({
+          user: null
+        });
+      }
+        // console.log("Failed.");
+      }
+    });
+  };
 
   render() {
-    Firebase.auth().onAuthStateChanged((user) =>{
-      if(user){
-        console.log("Login successfully.")
-      }else{
-        console.log("Failed.");
-      }
-    })
-    return (
+    // var user = Firebase.auth().currentUser;
+    if (this.state.user) return <Redirect to="/" />;
+    
+    return  (
       <div className="login-wrapper">
         <div className="container h-100">
           <div className="row h-100 justify-content-center align-items-center">
@@ -79,9 +109,6 @@ class Login extends Component {
                         <Button htmlType="submit" type="primary" block>
                           Login
                         </Button>
-                        <button type="button" onClick={this.logout} >
-                          Logout
-                        </button>
                       </div>
                     </form>
                   </div>
@@ -95,7 +122,12 @@ class Login extends Component {
           </div>
         </div>
       </div>
-    );
+    ) 
   }
 }
-export default Login;
+const mapDispatchToProps = dispatch => {
+  return {
+    actions: bindActionCreators(authActions, dispatch)
+  };
+};
+export default connect(null, mapDispatchToProps)(Login);

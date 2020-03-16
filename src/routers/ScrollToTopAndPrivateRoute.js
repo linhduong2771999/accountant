@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import {Redirect, Route} from "react-router-dom";
+import Firebase from "../config/FirebaseClient"
 import {withRouter} from "react-router-dom";
-import {fakeAuth} from "../config/Auth.config";
+import * as storeService from "../sagas/storeService";
 class ScrollToTopAndPrivateRoute extends Component {
     componentDidUpdate(prevProps) {
         if (
@@ -11,10 +12,14 @@ class ScrollToTopAndPrivateRoute extends Component {
         }
       }
     render() {
-        const {component: Component, ...rest} = this.props
+        const {component: Component, ...rest} = this.props;
+        var user = Firebase.auth().currentUser;
+        // console.log(user)
+        // const isAuthenticated = storeService.getGlobalState();
+        // console.log(isAuthenticated[0].isAuthenticated);
         return (
-            <Route {...rest} render={(props) => (
-                fakeAuth.isAuthenticated === true
+          <Route {...rest} render={(props) => (
+            user !== null
                   ? <Component {...props} />
                   : <Redirect to={{
                       pathname: '/login',
