@@ -1,6 +1,7 @@
 import React from 'react';
 import 'antd/dist/antd.css';
 import "./assets/scss/App.scss";
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import AppIndex from "./modules/App/App";
 
 function App() {

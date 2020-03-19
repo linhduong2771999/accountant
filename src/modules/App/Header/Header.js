@@ -3,6 +3,7 @@ import Firebase from "../../../config/FirebaseClient";
 import { PageHeader, Button } from "antd";
 import { Link, Redirect } from "react-router-dom";
 import Logo from "../../../assets/img/logo.jpg";
+import Swal from 'sweetalert2'
 class Header extends Component {
    
   constructor(props){
@@ -13,9 +14,20 @@ class Header extends Component {
     }
 
   logout = () => {
-    Firebase.auth().signOut();
-    this.setState({
-        user: true
+    return Swal.fire({
+      title: 'Bạn có chắc chắn đăng xuất?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#1890ff',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'OK, đăng xuất!'
+    }).then((result) => {
+      if (result.value) {
+        Firebase.auth().signOut();
+        this.setState({
+            user: true
+        })
+      }
     })
   };
 

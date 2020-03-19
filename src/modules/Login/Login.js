@@ -5,6 +5,7 @@ import { bindActionCreators } from "redux";
 import { Input, Checkbox, Button } from "antd";
 import Firebase from "../../config/FirebaseClient";
 import { authActions } from "../../actions/index";
+import Loader from "react-loader-spinner";
 class Login extends Component {
   _isMounted = false;
   constructor(props) {
@@ -13,12 +14,13 @@ class Login extends Component {
       email: "",
       password: "",
       user: false,
+      isLoading: false
     };
   }
 
   componentDidMount = () => {
-    this.authStateChanged();
     this._isMounted = true;
+    this.main();
   };
 
   componentWillUnmount() {
@@ -37,7 +39,7 @@ class Login extends Component {
     event.preventDefault();
     Firebase.auth()
       .signInWithEmailAndPassword(email, password)
-      .then((u) => {})
+      .then(u => {})
       .catch(error => {
         var errorCode = error.code;
         // var errorMessage = error.message;
@@ -50,33 +52,98 @@ class Login extends Component {
       });
   };
 
+  //    authStateChanged = () => {
+  //     return new Promise(function(resolve, reject) {
+  //       setTimeout(() => {
+  //         resolve(Firebase.auth().onAuthStateChanged(user => {
+  //           if (user) {
+  //             // this.props.actions.loginAccountSuccess(true);
+  //             if (this._isMounted) {
+  //                 this.setState({
+  //                   user
+  //                 })
+  //             }
+  //           } else {
+  //             if (this._isMounted) {
+  //               this.setState({
+  //                 user: null
+  //               });
+  //             }
+  //           }
+  //         }))
+  //       }, 3000);
+  //    });
+  // }
+
+  // authStateChanged = () => {
+  //   if(this._isMounted){
+  //   return new Promise( (resolve, reject) => {
+  //     setTimeout(() => {
+  //       Firebase.auth().onAuthStateChanged(user => {
+  //         if (user) {
+  //           this.setState({
+  //             user
+  //           })
+  //           // this.props.actions.loginAccountSuccess(true);
+  //         } else {
+  //             this.setState({
+  //               user: null
+  //             });
+  //         }
+  //       })
+  //       resolve();
+  //     }, 1000);
+  //  });
+  // }
+  // }
+
   authStateChanged = () => {
-    Firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        // this.props.actions.loginAccountSuccess(true);
-        if(this._isMounted){
-          this.setState({
-            user
-          });
-        }
-        
-        console.log("Login successfully.");
-      } else {
-        if(this._isMounted){
-        this.setState({
-          user: null
+    return new Promise( (resolve, reject) => {
+      reject({message: "ko ổn định"})
+      setTimeout(() => {
+        Firebase.auth().onAuthStateChanged(user => {
+          if (user) {
+            // this.props.actions.loginAccountSuccess(true);
+            if (this._isMounted) {
+              this.setState({
+                user
+              });
+            }
+          } else {
+            if(this._isMounted){
+
+              this.setState({
+                user: null
+              });
+            }
+          }
         });
-      }
-        // console.log("Failed.");
-      }
+        resolve();
+      }, 1000)
+
+    })
+  };
+
+  waitSpinner = () => {
+    return new Promise((resolve, reject) =>  {
+      setTimeout(() => {
+        this.setState({
+          isLoading: true
+        })
+        resolve();
+      }, 1000);
     });
+  };
+
+  main =  () => {
+     this.waitSpinner();
+     this.authStateChanged();
   };
 
   render() {
     // var user = Firebase.auth().currentUser;
     if (this.state.user) return <Redirect to="/" />;
-    
-    return  (
+    return this.state.isLoading ? (
       <div className="login-wrapper">
         <div className="container h-100">
           <div className="row h-100 justify-content-center align-items-center">
@@ -122,7 +189,15 @@ class Login extends Component {
           </div>
         </div>
       </div>
-    ) 
+    ) : (
+      <Loader
+        type="Puff"
+        color="#00BFFF"
+        height={100}
+        width={100}
+        timeout={1000}
+      />
+    );
   }
 }
 const mapDispatchToProps = dispatch => {
