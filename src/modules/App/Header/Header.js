@@ -3,7 +3,8 @@ import Firebase from "../../../config/FirebaseClient";
 import { PageHeader, Button } from "antd";
 import { Link, Redirect } from "react-router-dom";
 import Logo from "../../../assets/img/logo.jpg";
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
+import * as Color from "../../../assets/styles/Colors";
 class Header extends Component {
    
   constructor(props){
@@ -18,8 +19,8 @@ class Header extends Component {
       title: 'Bạn có chắc chắn đăng xuất?',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#1890ff',
-      cancelButtonColor: '#d33',
+      confirmButtonColor: Color.primaryColor,
+      cancelButtonColor: Color.dangerColor,
       confirmButtonText: 'OK, đăng xuất!'
     }).then((result) => {
       if (result.value) {
