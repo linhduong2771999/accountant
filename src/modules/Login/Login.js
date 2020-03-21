@@ -38,12 +38,12 @@ class Login extends Component {
         [name]: value
       },
       () => {
-        this.disabledButton(this.state.password);
+        this.validatePassword(this.state.password);
       }
     );
   };
 
-  disabledButton = password => {
+  validatePassword = password => {
     if (Validate.validateStrengthPassword(password)) {
       this.setState({
         disabledButton: true,
