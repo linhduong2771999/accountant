@@ -7,6 +7,7 @@ import Firebase from "../../config/FirebaseClient";
 import { authActions } from "../../actions/index";
 import * as Notifies from "../../components/Notifies/Notifies";
 import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
+import * as Validate from "../../helpers/Validate";
 class Login extends Component {
   _isMounted = false; // giải quyết vấn đề unmounted component
   constructor(props) {
@@ -15,7 +16,9 @@ class Login extends Component {
       email: "",
       password: "",
       user: "",
-      isLoading: false
+      isLoading: false,
+      disabledButton: false,
+      textWarningPassword: false
     };
   }
 
@@ -30,9 +33,28 @@ class Login extends Component {
 
   onChange = event => {
     const { name, value } = event.target;
-    this.setState({
-      [name]: value
-    });
+    this.setState(
+      {
+        [name]: value
+      },
+      () => {
+        this.disabledButton(this.state.password);
+      }
+    );
+  };
+
+  disabledButton = password => {
+    if (Validate.validateStrengthPassword(password)) {
+      this.setState({
+        disabledButton: true,
+        textWarningPassword: false
+      });
+    } else {
+      this.setState({
+        disabledButton: false,
+        textWarningPassword: true
+      });
+    }
   };
 
   userLogin = event => {
@@ -47,57 +69,12 @@ class Login extends Component {
           alert("Sai mật khẩu hoặc tài khoản !!!");
         } else if (errorCode === "auth/network-request-failed") {
           Notifies.errorMessege();
-        } else {
+        } else{
           alert("Tài khoản không tồn tại !!!");
         }
-        console.log(error);
+        // console.log(error);
       });
   };
-
-  //    authStateChanged = () => {
-  //     return new Promise(function(resolve, reject) {
-  //       setTimeout(() => {
-  //         resolve(Firebase.auth().onAuthStateChanged(user => {
-  //           if (user) {
-  //             // this.props.actions.loginAccountSuccess(true);
-  //             if (this._isMounted) {
-  //                 this.setState({
-  //                   user
-  //                 })
-  //             }
-  //           } else {
-  //             if (this._isMounted) {
-  //               this.setState({
-  //                 user: null
-  //               });
-  //             }
-  //           }
-  //         }))
-  //       }, 3000);
-  //    });
-  // }
-
-  // authStateChanged = () => {
-  //   if(this._isMounted){
-  //   return new Promise( (resolve, reject) => {
-  //     setTimeout(() => {
-  //       Firebase.auth().onAuthStateChanged(user => {
-  //         if (user) {
-  //           this.setState({
-  //             user
-  //           })
-  //           // this.props.actions.loginAccountSuccess(true);
-  //         } else {
-  //             this.setState({
-  //               user: null
-  //             });
-  //         }
-  //       })
-  //       resolve();
-  //     }, 1000);
-  //  });
-  // }
-  // }
 
   onAuthStateChanged = () => {
     return new Promise(resolve => {
@@ -140,11 +117,12 @@ class Login extends Component {
   };
 
   render() {
+    const { disabledButton, textWarningPassword } = this.state;
     // var user = Firebase.auth().currentUser;
     if (this.state.user) return <Redirect to="/" />;
     return (
       <div className="login-wrapper">
-      {this.state.isLoading ? null : <LoadingSpinner /> }
+        {this.state.isLoading ? null : <LoadingSpinner />}
         <div className="container h-100">
           <div className="row h-100 justify-content-center align-items-center">
             <div className="col-xl-4 col-lg-4 col-md-7 col-sm-12 col-12">
@@ -160,6 +138,7 @@ class Login extends Component {
                           placeholder="Email"
                           name="email"
                           onChange={this.onChange}
+                          autoComplete="on"
                         />
                       </div>
                       <div className="form-group">
@@ -168,12 +147,27 @@ class Login extends Component {
                           name="password"
                           onChange={this.onChange}
                         />
+                        {textWarningPassword ? (
+                          <span
+                            style={{ fontSize: "0.75em" }}
+                            className="text-danger"
+                          >
+                            ( Mật khẩu phải có ít nhất 1 chữ in hoa và số )
+                          </span>
+                        ) : (
+                          ""
+                        )}
                       </div>
                       <div className="checkbox">
                         <Checkbox>Ghi nhớ</Checkbox>
                       </div>
                       <div className="form-group mt-3">
-                        <Button htmlType="submit" type="primary" block>
+                        <Button
+                          disabled={disabledButton ? false : true}
+                          htmlType="submit"
+                          type="primary"
+                          block
+                        >
                           Đăng nhập
                         </Button>
                       </div>
