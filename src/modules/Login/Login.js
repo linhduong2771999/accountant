@@ -152,7 +152,7 @@ class Login extends Component {
                             style={{ fontSize: "0.75em" }}
                             className="text-danger"
                           >
-                            ( Mật khẩu phải có ít nhất 1 chữ in hoa và số )
+                            ( Mật khẩu phải có ít nhất 1 chữ in hoa, số và 8 ký tự )
                           </span>
                         ) : (
                           ""
