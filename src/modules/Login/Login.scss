@@ -1,3 +1,4 @@
+@import "../../assets/scss/constants/variables.constant.scss";
 .login-wrapper{
     background-image: url('../../assets/img/tea.jpg');
     height: 100vh;
@@ -8,6 +9,25 @@
     .row{
         .card{
             border-radius: 10px;
+            border: none;
+            .nav-tabs-custom{
+                // background-color:rgba(214, 59, 214, 0.938);
+                border-top-right-radius: 10px;
+                border-top-left-radius: 10px;
+                border: none;
+                overflow: hidden;
+                .nav-link-custom{
+                    padding:0.75rem 0;
+                    // transition:all 0.4s ease;
+                    // background-color: rgba(196, 185, 185, 0.747);
+                    a{
+                        font-weight: bold;
+                        font-size: 1rem;
+                        // color: rgb(103, 43, 212);
+                        color: rgb(115, 141, 219);
+                    }
+                }
+            }
         }
     }
 }
