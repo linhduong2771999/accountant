@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {Redirect, Route} from "react-router-dom";
 import Firebase from "../config/FirebaseClient"
 import {withRouter} from "react-router-dom";
-import * as storeService from "../sagas/storeService";
 class ScrollToTopAndPrivateRoute extends Component {
     componentDidUpdate(prevProps) {
         if (
