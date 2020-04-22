@@ -17,9 +17,9 @@ class Login extends Component {
       password: "",
       user: "",
       isLoading: false,
+      isActiveClass: true,
       disabledButton: false,
-      textWarningPassword: false,
-      isActiveClass: true
+      textWarningPassword: false
     };
   }
 
@@ -105,9 +105,8 @@ class Login extends Component {
       setTimeout(() => {
         Firebase.auth().onAuthStateChanged(user => {
           if (user) {
-            // this.props.actions.loginAccountSuccess(true);
+            this.props.actions.loginAccountSuccess(true);
             if (this._isMounted) {
-              console.log("singup")
               this.setState({
                 user
               });
@@ -120,12 +119,11 @@ class Login extends Component {
             }
           }
         });
-        resolve();
       }, 1000);
     });
   };
 
-  loadingSpinner = () => {
+   loadingSpinner = () => {
     return new Promise(resolve => {
       setTimeout(() => {
         this.setState({
@@ -153,8 +151,7 @@ class Login extends Component {
   };
   render() {
     const { disabledButton, textWarningPassword, isActiveClass } = this.state;
-    // var user = Firebase.auth().currentUser;
-    if (this.state.user) return <Redirect to="/" />;
+    if (this.state.user) return <Redirect to="/user_manager" />;
     return (
       <div className="login-wrapper">
         {this.state.isLoading ? null : <LoadingSpinner />}

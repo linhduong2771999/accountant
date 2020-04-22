@@ -1,7 +1,8 @@
-import firebase from "firebase/app";
+import * as firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/auth";
 import 'firebase/app';
+import 'firebase/storage';
 const firebaseConfig = {
     apiKey: "AIzaSyDgG3GnDTJxPKUc4isx ROhKOe-KIzQ4pDw",
     authDomain: "accounting-806b6.firebaseapp.com",
@@ -13,6 +14,11 @@ const firebaseConfig = {
     measurementId: "G-Y5EQ0KWFWH"
   };
 firebase.initializeApp(firebaseConfig);
+
+var storage = firebase.storage();
 firebase.firestore().settings({timestampsInSnapshots: true});
 
-export default firebase; 
+// export default {firebase, storage}; 
+export {
+  firebase, storage as default
+}
