@@ -119,11 +119,11 @@ class UserList extends Component {
         onFilter: (value, item) => {
           return item.position.indexOf(value) !== -1;
         },
-        sorter: (a, b) => {
-          return a.position
-            .toLowerCase()
-            .localeCompare(b.position.toLowerCase());
-        },
+        // sorter: (a, b) => {
+        //   return a.position
+        //     .toLowerCase()
+        //     .localeCompare(b.position.toLowerCase());
+        // },
       },
       {
         title: "Tình trạng",
