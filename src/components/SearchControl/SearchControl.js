@@ -17,7 +17,7 @@ class SearchControl extends Component {
     
       onHanldeSearchSubmit = (e) => {
         e.preventDefault();
-        this.props.searchUserManager(this.state.searchText);
+        this.props.searchUser(this.state.searchText);
       };
 
 
@@ -30,7 +30,7 @@ class SearchControl extends Component {
               name="searchText"
               value={this.state.searchText}
               onChange={this.onHandleSearchChange}
-              placeholder="Tìm kiếm"
+              placeholder="Gõ không dấu"
             />
           </Col>
           <Col xs={8} sm={8} md={4} lg={8} xl={4}>
