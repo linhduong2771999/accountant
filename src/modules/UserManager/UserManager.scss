@@ -1,0 +1,25 @@
+.user-manager_button{
+    display: block;
+    margin-right: 1rem;
+    background-color: #ccc;
+    border: none;
+    &:hover{
+        background-color: rgb(180, 175, 175);
+    }
+}
+
+.avatar-user-table{
+    height: 45px;
+    width: 45px;
+    display: block;
+    margin: auto;
+    border-radius: 50%;
+}
+
+// .cvs-download{
+//     display:flex;/*CSS3*/
+//     align-items:center;/*Vertical align*/
+//     justify-content:center;/*horizontal align*/
+//     color: white;
+//     background-color: #1890ff;
+// }

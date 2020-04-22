@@ -31,3 +31,21 @@
         }
     }
 }
+
+.switch-wrapper {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .switch-wrapper > div:first-child {
+    position: absolute;
+    display: none;
+    overflow: hidden;
+  }
+  
+  .switch-wrapper > div:last-child {
+    position: relative;
+    display: block;
+    overflow: initial;
+  }
+  

@@ -1,15 +1,20 @@
 import {combineReducers} from "redux";
+import { reducer as formReducer } from 'redux-form';
 import  authReducers from "../modules/Login/reducers/authReducers";
-
-const reducers = [
-    authReducers
-]
+import  userManagerReducer from "../modules/UserManager/reducers/UserManagerReducer";
+import modalPopupReducer from "./modalPopupReducer";
+// const reducers = [
+   
+// ]
 const rootReducer = combineReducers({
-    ...reducers
+    authReducers,
+    userManagerReducer,
+    modalPopupReducer,
+    form: formReducer
 })
-
 export default rootReducer;
 
-export {
-    authReducers
-};
+// export {
+//     authReducers,
+//     userManagerReducer
+// };
