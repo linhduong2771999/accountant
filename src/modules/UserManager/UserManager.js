@@ -6,11 +6,11 @@ import { reduxForm } from "redux-form";
 import { UserManagerActions } from "../../actions/index";
 import { ModalPopupActions } from "../../actions/index";
 import { filterText } from "../../helpers/return";
-import { CSVLink } from "react-csv";
 import * as Notifies from "../../components/Notifies/Notifies";
 import Table from "../../components/Table/Index";
 import UserManagerForm from "./UserManagerForm/UserManagerForm";
-import SearchControl from "../../components/SearchControl/index";
+import SearchControl from "../../components/SearchControl/SearchControl";
+import CSVDownload from "../../components/CSVDownload/CSVDownload";
 import UserImage from "../../assets/img/userImage.png";
 
 const handleSearch = (confirm) => {
@@ -84,7 +84,7 @@ class UserManager extends Component {
     var { userList, searchText, oneUser } = this.props;
     const actionsColumns = (id) => (
       <Row>
-        <Tooltip placement="top" title="Edit">
+        <Tooltip placement="top" title="Sửa">
           <Button
             style={{ marginRight: "1rem" }}
             icon="edit"
@@ -92,7 +92,7 @@ class UserManager extends Component {
             onClick={() => this.onHandleOpenModal("edit", id)}
           ></Button>
         </Tooltip>
-        <Tooltip placement="top" title="Delete">
+        <Tooltip placement="top" title="Xóa">
           <Button icon="delete" type="default" onClick={() => this.onHandleOpenDeleteBox(id)}></Button>
         </Tooltip>
       </Row>
@@ -250,7 +250,7 @@ class UserManager extends Component {
           filterText(item.name)
             .toLowerCase()
             .trim()
-            .replace(/\s+/g, "")
+            // .replace(/\s+/g, "")
             .includes(this.props.searchText.toLowerCase()) ||
           filterText(item.email)
             .toLowerCase()
@@ -260,7 +260,7 @@ class UserManager extends Component {
           filterText(item.position)
             .toLowerCase()
             .trim()
-            .replace(/\s+/g, "")
+            // .replace(/\s+/g, "")
             .includes(this.props.searchText.toLowerCase()) ||
           filterText(item.status)
             .toLowerCase()
@@ -283,7 +283,7 @@ class UserManager extends Component {
       <Fragment>
         <Row gutter={[0, { xs: 32, sm: 32, md: 32, xl: 32 }]}>
           <Col xs={24} sm={24} md={16} lg={8} xl={10}>
-                <SearchControl searchUserManager={this.props.actions.searchUserManager}/>
+                <SearchControl searchUser={this.props.actions.searchUserManager}/>
           </Col>
           <Col xs={24} sm={24} md={16} lg={8} xl={14}>
             <Row type="flex" justify="end">
@@ -295,14 +295,7 @@ class UserManager extends Component {
               >
                 Thêm mới
               </Button>
-              <CSVLink data={userList}>
-                  <Button
-                  icon="download"
-                  type="primary"
-                  >
-                    Tải
-                </Button>
-                </CSVLink>
+              <CSVDownload userList={userList}/>
             </Row>
           </Col>
         </Row>
