@@ -19,20 +19,17 @@ const handleReset = (clearFilters) => {
 class UserList extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      pagination: {}
-    };
   }
   componentDidMount = () => {
     this.props.actions.fetchUserListRequest();
   }
 
   onHandleTableChange = (pagination, filters, sorter, extra) => {
-    const pager = { ...this.state.pagination };
-    pager.current = pagination.current;
-    this.setState({
-      pagination: pager,
-    });
+    // const pager = { ...this.state.pagination };
+    // pager.current = pagination.current;
+    // this.setState({
+    //   pagination: pager,
+    // });
     this.fetchUser({
       results: pagination.pageSize,
       page: pagination.current,
@@ -44,14 +41,14 @@ class UserList extends Component {
   };
 
   fetchUser = (params = {}) => {
-    const { extra } = params;
+    // const { extra } = params;
     // console.log(params);
     this.props.actions.fetchUserManagerRequest({ ...params });
-    const pagination = { ...this.state.pagination };
-    pagination.total = extra.length;
-    this.setState({
-      pagination,
-    });
+    // const pagination = { ...this.state.pagination };
+    // pagination.total = extra.length;
+    // this.setState({
+    //   pagination,
+    // });
   };
 
   render() {
@@ -162,10 +159,10 @@ class UserList extends Component {
         },
       },
       {
-        title: "Công việc",
-        dataIndex: "task",
+        title: "Chuyên môn",
+        dataIndex: "major",
         sorter: (a, b) => {
-          return a.task.toLowerCase().localeCompare(b.task.toLowerCase());
+          return a.major.toLowerCase().localeCompare(b.major.toLowerCase());
         },
       },
       {
@@ -236,16 +233,16 @@ class UserList extends Component {
             .toLowerCase()
             .trim()
             .includes(this.props.searchText.toLowerCase()) ||
-          filterText(item.task)
+          filterText(item.major)
             .toLowerCase()
             .trim()
-            .includes(this.props.searchText.toLowerCase()) ||
+            .replace(/\s+/g, "")
+            .includes(this.props.searchText.toLowerCase().replace(/\s+/g, "")) ||
           filterText(item.phone)
             .toLowerCase()
             .trim()
             .replace(/\s+/g, "")
             .includes(this.props.searchText.toLowerCase());
-        // this.state.pagination.total = data.length;
         return data;
       });
     }
@@ -271,7 +268,7 @@ class UserList extends Component {
           dataSource={userList}
           onChange={this.onHandleTableChange}
           loading={this.props.isLoading}
-          pagination={this.state.pagination}
+          pagination={{total: userList.length}}
         />
       </Fragment>
     );
