@@ -6,6 +6,7 @@ import { reduxForm } from "redux-form";
 import { UserManagerActions } from "../../actions/index";
 import { ModalPopupActions } from "../../actions/index";
 import { filterText } from "../../helpers/return";
+import Skeleton from 'react-loading-skeleton';
 import * as Notifies from "../../components/Notifies/Notifies";
 import Table from "../../components/Table/Index";
 import UserManagerForm from "./UserManagerForm/UserManagerForm";
@@ -23,20 +24,17 @@ const handleReset = (clearFilters) => {
 class UserManager extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      pagination: {}
-    };
   }
   componentDidMount = () => {
     this.props.actions.fetchUserManagerRequest();
   };
 
   onHandleTableChange = (pagination, filters, sorter, extra) => {
-    const pager = { ...this.state.pagination };
-    pager.current = pagination.current;
-    this.setState({
-      pagination: pager,
-    });
+    // const pager = { ...this.state.pagination };
+    // pager.current = pagination.current;
+    // this.setState({
+    //   pagination: pager,
+    // });
     this.fetchUser({
       results: pagination.pageSize,
       page: pagination.current,
@@ -48,14 +46,14 @@ class UserManager extends Component {
   };
 
   fetchUser = (params = {}) => {
-    const { extra } = params;
+    // const { extra } = params;
     // console.log(params);
     this.props.actions.fetchUserManagerRequest({ ...params });
-    const pagination = { ...this.state.pagination };
-    pagination.total = extra.length;
-    this.setState({
-      pagination,
-    });
+    // const pagination = { ...this.state.pagination };
+    // pagination.total = extra.length;
+    // this.setState({
+    //   pagination,
+    // });
   };
 
   onHandleOpenModal = (type, id) => {
@@ -103,7 +101,7 @@ class UserManager extends Component {
         title: "Avatar",
         dataIndex: "avatarURL",
         render: (avatarURL) => {
-          return <img className="avatar-user-table" alt="..." src={avatarURL ? avatarURL : UserImage} />;
+          return <img className="avatar-user-table" alt="..." src={avatarURL ? avatarURL : UserImage} />
         },
         width: 100,
       },
@@ -192,10 +190,10 @@ class UserManager extends Component {
         },
       },
       {
-        title: "Công việc",
-        dataIndex: "task",
+        title: "Chuyên môn",
+        dataIndex: "major",
         sorter: (a, b) => {
-          return a.task.toLowerCase().localeCompare(b.task.toLowerCase());
+          return a.major.toLowerCase().localeCompare(b.major.toLowerCase());
         },
       },
       {
@@ -266,7 +264,7 @@ class UserManager extends Component {
             .toLowerCase()
             .trim()
             .includes(this.props.searchText.toLowerCase()) ||
-          filterText(item.task)
+          filterText(item.major)
             .toLowerCase()
             .trim()
             .includes(this.props.searchText.toLowerCase()) ||
@@ -275,7 +273,6 @@ class UserManager extends Component {
             .trim()
             .replace(/\s+/g, "")
             .includes(this.props.searchText.toLowerCase());
-        // this.state.pagination.total = data.length;
         return data;
       });
     }
@@ -304,7 +301,7 @@ class UserManager extends Component {
           dataSource={userList}
           onChange={this.onHandleTableChange}
           loading={this.props.isLoading}
-          pagination={this.state.pagination}
+          pagination={{total: userList.length}}
         />
         <UserManagerForm oneUser={oneUser} />
       </Fragment>

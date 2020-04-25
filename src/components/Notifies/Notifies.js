@@ -36,7 +36,8 @@ export const deleteSuccess = (callback) => {
     showCancelButton: true,
     confirmButtonColor: '#3085d6',
     cancelButtonColor: '#d33',
-    confirmButtonText: 'Xóa luôn'
+    confirmButtonText: 'Xóa luôn',
+    focusCancel: true
   }).then((result) => {
     if (result.value) {
       if(callback){

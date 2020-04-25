@@ -46,3 +46,12 @@
   align-items: center;
   z-index: 100;
 }
+
+.ant-modal-header{
+  background-color: #6d757d;
+  .ant-modal-title{
+    .modal-title{
+      color: white;
+    }
+  }
+}

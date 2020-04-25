@@ -122,7 +122,7 @@ class UserManagerForm extends Component {
         email: value.email || "",
         position: value.position || "",
         status: value.status || "",
-        task: value.task || "",
+        major: value.major || "",
         phone: value.phone || "",
         avatarURL: paramAvatar,
       },
@@ -144,7 +144,7 @@ class UserManagerForm extends Component {
         email: value.email || "",
         position: value.position || "",
         status: value.status || "",
-        task: value.task || "",
+        major: value.major || "",
         phone: value.phone || "",
         avatarURL: paramAvatar,
       },
@@ -297,14 +297,14 @@ class UserManagerForm extends Component {
               <div className="form-group row">
                 <label
                   className="col-2 text-right control-label font-weight-bold"
-                  htmlFor="task"
+                  htmlFor="major"
                 >
-                  Công việc :
+                  Chuyên môn :
                 </label>
                 <div className="col-10">
                   <Field
                     className="form-control"
-                    name="task"
+                    name="major"
                     component="textarea"
                   />
                 </div>
