@@ -17,11 +17,19 @@ export default handleActions(
         },
         [actions.fetchUserListSuccess]: (state , action) => {
             const {payload} = action;
-            const data = Object.values(payload)
-            return {
-                ...state,
-                userList: [...data],
-                isLoading:false
+            if(payload){
+                const data = Object.values(payload)
+                return {
+                    ...state,
+                    isLoading: false,
+                    userList: [...data]
+                }
+            }
+            else{
+                return {
+                    ...state,
+                    isLoading: false
+                }
             }
         },
         [actions.fetchUserListError]: (state , action) => {

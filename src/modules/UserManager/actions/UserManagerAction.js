@@ -44,3 +44,11 @@ export const deleteUserManagerError = createAction(DELETE_USER_MANAGER_ERROR);
 const SEARCH_USER_MANAGER = "SEARCH_USER_MANAGER";
 
 export const searchUserManager = createAction(SEARCH_USER_MANAGER);
+
+const GET_USER_BY_ID_USER_MANAGER = "GET_USER_BY_ID_USER_MANAGER";
+
+export const getUserByIdUserManager = createAction(GET_USER_BY_ID_USER_MANAGER);
+
+const SORT_USER_MANAGER = "SORT_USER_MANAGER";
+
+export const sortUserManager = createAction(SORT_USER_MANAGER);

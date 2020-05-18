@@ -9,7 +9,7 @@ export const getOneUserManager = (id) => {
 }
 
 export const createUserManager = (user) => {
-    return callAPI(`user/${user.id}`, "PUT", user);
+    return callAPI(`user/${user.id}`, "PUT", user); // tạo tên user bởi id 
 }
 
 export const updateUserManager = (user) => {

@@ -3,23 +3,12 @@ import {connect} from "react-redux"
 import { bindActionCreators } from "redux";
 import { UserListActions } from "../../actions/index";
 import { filterText } from "../../helpers/return";
-import {Row, Col, Button, Tag, Input, Tooltip} from "antd";
+import {Row, Col, Button, Tooltip} from "antd";
 import SearchControl from "../../components/SearchControl/SearchControl";
 import CSVDownload from "../../components/CSVDownload/CSVDownload";
 import UserImage from "../../assets/img/userImage.png";
 import Table from "../../components/Table/Index";
-
-const handleSearch = (confirm) => {
-  confirm();
-};
-
-const handleReset = (clearFilters) => {
-  clearFilters();
-};
 class UserList extends Component {
-  constructor(props) {
-    super(props);
-  }
   componentDidMount = () => {
     this.props.actions.fetchUserListRequest();
   }
@@ -43,7 +32,7 @@ class UserList extends Component {
   fetchUser = (params = {}) => {
     // const { extra } = params;
     // console.log(params);
-    this.props.actions.fetchUserManagerRequest({ ...params });
+    this.props.actions.fetchUserListRequest({ ...params });
     // const pagination = { ...this.state.pagination };
     // pagination.total = extra.length;
     // this.setState({
@@ -53,7 +42,7 @@ class UserList extends Component {
 
   render() {
     var { userList, searchText } = this.props;
-
+    const suggestionValue = userList;
     const actionsColumns = (id) => (
       <Row>
         <Tooltip placement="top" title="Chi tiết">
@@ -78,84 +67,34 @@ class UserList extends Component {
         title: "Tên",
         dataIndex: "name",
         render: (name) => {
-          return <strong>{name}</strong>;
+          return <span className="text-primary text-capitalize">{name}</span>;
         },
         sorter: (a, b) => {
           return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
         },
       },
       {
-        title: "Email",
-        dataIndex: "email",
-        sorter: (a, b) => {
-          return a.email.toLowerCase().localeCompare(b.email.toLowerCase());
-        },
-      },
-      {
         title: "Chức vụ",
         dataIndex: "position",
-        filters: [
-          {
-            text: "Sếp",
-            value: "boss",
-          },
-          {
-            text: "Nhận viên",
-            value: "staff",
-          },
-          {
-            text: "Kế toán",
-            value: "accounting",
-          },
-        ],
         render: (position) => {
           return (
             <span style={{ textTransform: "capitalize" }}>{position}</span>
           );
         },
-        onFilter: (value, item) => {
-          return item.position.indexOf(value) !== -1;
+        sorter: (a, b) => {
+          return a.position
+            .toLowerCase()
+            .localeCompare(b.position.toLowerCase());
         },
-        // sorter: (a, b) => {
-        //   return a.position
-        //     .toLowerCase()
-        //     .localeCompare(b.position.toLowerCase());
-        // },
       },
       {
-        title: "Tình trạng",
-        dataIndex: "status",
-        filters: [
-          {
-            text: "Hoàn thành",
-            value: "done",
-          },
-          {
-            text: "Trong tiến trình",
-            value: "in progress",
-          },
-          {
-            text: "Bắt đầu",
-            value: "start",
-          },
-        ],
-        onFilter: (value, item) => {
-          return item.status.indexOf(value) !== -1;
+        title: "Trình độ",
+        dataIndex: "level",  
+        render: (level) => {
+          return <span style={{textTransform: "capitalize"}}>{level}</span>
         },
-        render: (status) => {
-          switch (status) {
-            case "done":
-              return <Tag color="red">XONG</Tag>;
-            case "in progress":
-              return <Tag color="green">TRONG TIẾN TRÌNH</Tag>;
-            case "start":
-              return <Tag color="geekblue">BẮT ĐẦU</Tag>;
-            default:
-              return null;
-          }
-        },  
         sorter: (a, b) => {
-          return a.status.toLowerCase().localeCompare(b.status.toLowerCase());
+          return a.level.toLowerCase().localeCompare(b.level.toLowerCase());
         },
       },
       {
@@ -168,36 +107,16 @@ class UserList extends Component {
       {
         title: "Số dt",
         dataIndex: "phone",
-        filterDropdown: ({
-          setSelectedKeys,
-          selectedKeys,
-          confirm,
-          clearFilters,
-        }) => (
-          <div style={{ padding: 8 }}>
-            <Input
-              placeholder={`Tìm kiếm `}
-              value={selectedKeys[0]}
-              onPressEnter={() => handleSearch(confirm)}
-              onChange={(e) =>
-                setSelectedKeys(e.target.value ? [e.target.value] : [])
-              }
-              style={{ width: 188, marginBottom: 8, display: "block" }}
-            />
-            <Button
-              onClick={() => handleReset(clearFilters)}
-              size="small"
-              style={{ width: 90 }}
-            >
-              Reset
-            </Button>
-          </div>
-        ),
         sorter: (a, b) => {
           return a.phone - b.phone;
         },
-        onFilter: (value, record) => {
-          return record.phone.indexOf(value) !== -1;
+      },
+      {
+        title: "Email",
+        dataIndex: "email",
+        width:250, 
+        sorter: (a, b) => {
+          return a.email.toLowerCase().localeCompare(b.email.toLowerCase());
         },
       },
       {
@@ -229,7 +148,7 @@ class UserList extends Component {
             .trim()
             // .replace(/\s+/g, "")
             .includes(this.props.searchText.toLowerCase()) ||
-          filterText(item.status)
+          filterText(item.level)
             .toLowerCase()
             .trim()
             .includes(this.props.searchText.toLowerCase()) ||
@@ -253,6 +172,7 @@ class UserList extends Component {
           <Col xs={24} sm={24} md={16} lg={8} xl={10}>
             <SearchControl
               searchUser={this.props.actions.searchUserList}
+              suggestionValue={suggestionValue}
             />
           </Col>
           <Col xs={24} sm={24} md={16} lg={8} xl={14}>
