@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from "react";
 import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
-import { Modal, Button, Upload, Progress, Spin } from "antd";
+import { Modal, Button, Upload, Progress, Spin, Select , Input } from "antd";
 import { bindActionCreators } from "redux";
 import { ModalPopupActions } from "../../../actions/index";
 import { UserManagerActions } from "../../../actions/index";
@@ -11,14 +11,18 @@ import storage from "../../../config/FirebaseClient";
 import { validate } from "../../../helpers/Validate";
 import UserDefaultImage from "../../../assets/img/userImage.png";
 
+const { Option } = Select; 
+
 const renderField = ({
   input,
   type,
   className,
+  autoComplete,
+  placeholder,
   meta: { touched, error, warning },
 }) => (
   <Fragment>
-    <input className={className} {...input} type={type} />
+    <Input className={className} placeholder={placeholder} autoComplete={autoComplete} {...input} type={type} />
     {touched &&
       ((error && <span className="text-validate">{error}</span>) ||
         (warning && <span className="text-validate">{warning}</span>))}
@@ -32,9 +36,9 @@ const renderSelectField = ({
   children,
 }) => (
   <Fragment>
-    <select className={className} {...input}>
+    <Select className={className} {...input}>
       {children}
-    </select>
+    </Select>
     {touched && error && <span className="text-validate">{error}</span>}
   </Fragment>
 );
@@ -70,10 +74,10 @@ class UserManagerForm extends Component {
   // upload file to firebase storage
   handleUpload = (value) => {
     var { imgInfo } = this.state;
-    const { oneUser } = this.props;
+    const { userById } = this.props;
     if (imgInfo === null) {
-      if(oneUser.id){
-        this.updateUserManagerAPI(oneUser.id, value, UserDefaultImage);
+      if(userById.id){
+        this.updateUserManagerAPI(userById.id, value, UserDefaultImage);
       }
       else{
         this.createUserManagerAPI(value, UserDefaultImage); 
@@ -99,8 +103,8 @@ class UserManagerForm extends Component {
         },
         () => {
           uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-            if(oneUser.id){
-              this.updateUserManagerAPI(oneUser.id, value, downloadURL);
+            if(userById.id){
+              this.updateUserManagerAPI(userById.id, value, downloadURL);
             }
             else{
               this.createUserManagerAPI(value, downloadURL);
@@ -121,7 +125,7 @@ class UserManagerForm extends Component {
         name: value.name || "",
         email: value.email || "",
         position: value.position || "",
-        status: value.status || "",
+        level: value.level || "",
         major: value.major || "",
         phone: value.phone || "",
         avatarURL: paramAvatar,
@@ -143,7 +147,7 @@ class UserManagerForm extends Component {
         name: value.name || "",
         email: value.email || "",
         position: value.position || "",
-        status: value.status || "",
+        level: value.level || "",
         major: value.major || "",
         phone: value.phone || "",
         avatarURL: paramAvatar,
@@ -213,7 +217,7 @@ class UserManagerForm extends Component {
       }
         <form onSubmit={handleSubmit(this.submitValue)} id="myForm">
           <div className="row">
-            <div className="col-12">
+            <div className="col-12 mb-2">
               <div className="form-group row">
                 <label
                   className="col-2 text-right control-label font-weight-bold"
@@ -223,15 +227,16 @@ class UserManagerForm extends Component {
                 </label>
                 <div className="col-10">
                   <Field
+                    placeholder="Tên"
                     name="name"
-                    className="form-control"
-                    component={renderField}
+                    autoComplete="off"
                     type="text"
+                    component={renderField}
                   />
                 </div>
               </div>
             </div>
-            <div className="col-12">
+            <div className="col-12 mb-2">
               <div className="form-group row">
                 <label
                   className="col-2 text-right control-label font-weight-bold"
@@ -241,7 +246,7 @@ class UserManagerForm extends Component {
                 </label>
                 <div className="col-10">
                   <Field
-                    className="form-control"
+                    placeholder="Email"
                     name="email"
                     component={renderField}
                     type="email"
@@ -249,7 +254,7 @@ class UserManagerForm extends Component {
                 </div>
               </div>
             </div>
-            <div className="col-12">
+            <div className="col-12 mb-2">
               <div className="form-group row">
                 <label
                   className="col-2 control-label text-right font-weight-bold"
@@ -259,58 +264,59 @@ class UserManagerForm extends Component {
                 </label>
                 <div className="col-4">
                   <Field
-                    className="form-control"
                     name="position"
                     component={renderSelectField}
                   >
-                    <option value="">Chức vụ</option>
-                    <option value="Sếp">Sếp</option>
-                    <option value="Nhân viên">Nhân viên</option>
-                    <option value="Kế toán">Kế toán</option>
+                    <Option value="">Chức vụ</Option>
+                    <Option value="Sếp">Sếp</Option>
+                    <Option value="Nhân viên">Nhân viên</Option>
+                    <Option value="Kế toán">Kế toán</Option>
                   </Field>
                 </div>
               </div>
             </div>
-            <div className="col-12">
+            <div className="col-12 mb-2">
               <div className="form-group row">
                 <label
                   className="col-2 control-label text-right font-weight-bold"
-                  htmlFor="status"
+                  htmlFor="level"
                 >
                   Tình trạng :
                 </label>
                 <div className="col-4">
                   <Field
-                    className="form-control"
-                    name="status"
-                    component="select"
+                    name="level"
+                    component={renderSelectField}
                   >
-                    <option value="">Tình trạng</option>
-                    <option value="done">Xong</option>
-                    <option value="in progress">Trong tiến trình</option>
-                    <option value="start">Bắt đầu</option>
+                    <Option value="">Trình độ</Option>
+                    <Option value="internship">Internship</Option>
+                    <Option value="fresher">Fresher</Option>
+                    <Option value="junior">Junior</Option>
+                    <Option value="middle">Middle</Option>
+                    <Option value="senior">Senior</Option>
+                    <Option value="master">Master</Option>
                   </Field>
                 </div>
               </div>
             </div>
-            <div className="col-12">
+            <div className="col-12 mb-2">
               <div className="form-group row">
                 <label
                   className="col-2 text-right control-label font-weight-bold"
                   htmlFor="major"
                 >
-                  Chuyên môn :
+                Chuyên môn :
                 </label>
                 <div className="col-10">
                   <Field
-                    className="form-control"
+                    placeholder="Chuyên môn (Nhập rõ)"
                     name="major"
-                    component="textarea"
+                    component={renderField}
                   />
                 </div>
               </div>
             </div>
-            <div className="col-12">
+            <div className="col-12 mb-2">
               <div className="form-group row">
                 <label
                   className="col-2 text-right control-label font-weight-bold"
@@ -320,15 +326,16 @@ class UserManagerForm extends Component {
                 </label>
                 <div className="col-10">
                   <Field
-                    className="form-control"
+                    placeholder="Số điện thoại"
                     name="phone"
                     component={renderField}
                     type="number"
+                    autoComplete="off"
                   />
                 </div>
               </div>
             </div>
-            <div className="col-12">
+            <div className="col-12 mb-2">
               <div className="form-group row">
                 <label
                   className="col-2 text-right control-label font-weight-bold"
@@ -351,6 +358,7 @@ class UserManagerForm extends Component {
                         width="100%"
                         src={selectedImg ? selectedImg : UserDefaultImage}
                       />
+                      <span>{isAddUser ? "Cập nhật ảnh" : "Cập nhật lại ảnh"}</span>
                     </Upload>
                   </div>
                 </div>
@@ -376,7 +384,7 @@ const mapStateToProps = (state) => {
   return {
     isOpenModal: state.modalPopupReducer.isOpenModal,
     isAddUser: state.modalPopupReducer.isAddUser,
-    initialValues: state.userManagerReducer.oneUser,
+    initialValues: state.userManagerReducer.userById,
     isLoading: state.userManagerReducer.isLoading,
   };
 };

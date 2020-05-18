@@ -1,7 +1,11 @@
 @import "./constants/fonts.constant.scss";
+@import "./constants/reset.constant.scss";
+@import "./constants/responsive.constant.scss";
 
 @import "../../modules/App/Sidebar/Sidebar.scss";
 @import "../../modules/Home/Dashboard.scss";
 @import "../../modules/Login/Login.scss";
 @import "../../modules/UserManager/UserManager.scss";
 @import "../../modules/UserManager/UserManagerForm/UserManagerForm.scss";
+@import "../../modules/WorkManager/WorkManager.scss";
+@import "../../modules/WorkManager/WorkManagerForm/WorkManagerForm.scss";

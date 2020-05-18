@@ -18,6 +18,16 @@ export const createSuccess = () => {
   })
 }
 
+export const actionSuccess = () => {
+  Swal.fire({
+    position: 'center',
+    icon: 'success',
+    title: 'Tác vụ thành công',
+    showConfirmButton: false,
+    timer: 1500
+  })
+}
+
 export const updateSuccess = () => {
   Swal.fire({
     position: 'center',
@@ -45,7 +55,7 @@ export const deleteSuccess = (callback) => {
       }
       Swal.fire(
         'Xóa thành công',
-        'success'
+        'Success'
       )
     }
   })

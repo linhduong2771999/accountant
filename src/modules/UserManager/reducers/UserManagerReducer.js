@@ -3,11 +3,12 @@ import * as actions from '../actions/UserManagerAction';
 
 const initialState = {
     userList: [],
-    oneUser: {
-        id:""
+    userById: {
+        id: ""
     },
     isLoading: false,
-    searchText: ""
+    searchText: "",
+    sortArray: []
 }
 
 export default handleActions(
@@ -20,11 +21,19 @@ export default handleActions(
         },
         [actions.fetchUserManagerSuccess]: (state, action) => {
             const {payload} = action;
-            const data = Object.values(payload)
-            return {
-                ...state,
-                isLoading: false,
-                userList: [...data]
+            if(payload){
+                const data = Object.values(payload)
+                return {
+                    ...state,
+                    isLoading: false,
+                    userList: [...data]
+                }
+            }
+            else{
+                return {
+                    ...state,
+                    isLoading: false
+                }
             }
         },
         [actions.fetchUserManagerError]: (state, action) => {
@@ -118,10 +127,29 @@ export default handleActions(
                 isLoading: false,
             }
         },
+        [actions.getUserByIdUserManager]: (state, action) => {
+            const id = action.payload;
+            const temp = state.userList;
+            const index = temp.findIndex((user) => user.id === id);
+            var data = state.userById;
+            if(temp[index]){
+                data = temp[index] 
+            }
+            return {
+                ...state,
+                userById: data
+            }
+        },  
         [actions.searchUserManager]: (state, action) => {
             return {
                 ...state,
                 searchText: action.payload
+            }
+        },
+        [actions.sortUserManager]: (state, action) => {
+            return {
+                ...state,
+                sortArray: action.payload
             }
         }
     },

@@ -3,10 +3,12 @@ import { flatten } from 'lodash/array';
 import { values } from 'lodash/object';
 import UserManagerSaga from "../modules/UserManager/sagas/UserManagerSaga";
 import UserListSaga from "../modules/UserList/sagas/UserListSaga";
+import WorkManagerSaga from "../modules/WorkManager/sagas/WorkManagerSaga";
 
 const sagaList = [
     UserManagerSaga,
-    UserListSaga
+    UserListSaga,
+    WorkManagerSaga
 ]
 
 export default function* () {
