@@ -1,8 +1,10 @@
 import React, { Component } from "react";
+import {compose, bindActionCreators } from "redux";
+import {connect} from "react-redux";
 import {withRouter} from "react-router-dom";
+import {AuthActions} from "../../actions/index";
 import HeaderIndex from "./Header/Header";
 import Sidebar from "./Sidebar/Sidebar";
-import RouterMain from "../../routers/mainRouter";
 import { Layout, Breadcrumb } from "antd";
 
 const { Header, Content, Footer } = Layout;
@@ -15,6 +17,11 @@ class AppIndex extends Component {
     };
   }
 
+  componentDidMount = () => {
+    const userUID = localStorage.getItem("userUID");
+    this.props.actions.fetchSpecificUserProfileRequest(JSON.parse(userUID));
+  }
+
   onCollapse = collapsed => {
     this.setState({
       collapsed
@@ -22,12 +29,12 @@ class AppIndex extends Component {
   };
   render() {
     const { collapsed } = this.state;
-    const { location } = this.props;
+    const { location, userProfile } = this.props;    
     return (
       <div>
-        <HeaderIndex />
+        <HeaderIndex userProfile={userProfile}/>
         <Layout style={{ minHeight: "100vh" }}>
-          <Sidebar onCollapse={collapsed => this.onCollapse(collapsed)} />
+          <Sidebar userProfile={userProfile ? userProfile : ""} onCollapse={collapsed => this.onCollapse(collapsed)} />
           <Layout
             style={{
               marginLeft: !collapsed ? 200 : 80,
@@ -40,7 +47,7 @@ class AppIndex extends Component {
                  <Breadcrumb.Item>Welcome {location.pathname.split("/")}</Breadcrumb.Item>
               </Breadcrumb>
               <div style={{ padding: 24, background: "#fff", minHeight: 360 }}>
-                  {RouterMain}
+                  {this.props.children}
               </div>
             </Content>
             <Footer style={{ textAlign: "center" }}>
@@ -53,4 +60,19 @@ class AppIndex extends Component {
   }
 }
 
-export default withRouter(AppIndex);
+const mapStateToProps = (state) => {
+  return {
+    userProfile: state.authReducers.userProfile
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    actions: bindActionCreators(AuthActions, dispatch)
+  }
+}
+
+export default compose(
+  withRouter,
+  connect(mapStateToProps, mapDispatchToProps)
+)(AppIndex);

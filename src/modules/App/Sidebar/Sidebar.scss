@@ -40,3 +40,7 @@
 //   @include respond-to(medium-screens) { width: 125px; }
 //   @include respond-to(wide-screens) { float: none; }
 // }
+
+.ant-tooltip {
+  position: fixed;
+}

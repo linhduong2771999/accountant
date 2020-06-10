@@ -367,6 +367,7 @@ class WorkManager extends Component {
   }
 
   render() {
+    console.log("Work manager");
     var { userList, searchText, isLoading , userById, taskById} = this.props;
     var {startIndex, endIndex, currentPage, totalPages} = this.state;
     const suggestionValue = userList;

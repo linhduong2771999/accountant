@@ -7,6 +7,11 @@ export const  validateStrengthPassword = (password) => {
     return (re.test(password) && re1.test(password) && re2.test(password) && re3.test(password));
 }
 
+export const validatePhoneNumber = (number) => {
+  const re = /^\d{10}$/ ;
+  return re.test(number);
+}
+
 // validate form
 export const validate = values => {
     const errors = {}

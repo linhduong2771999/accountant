@@ -3,8 +3,8 @@ import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { Input, Checkbox, Button } from "antd";
-import Firebase from "../../config/FirebaseClient";
-import { authActions } from "../../actions/index";
+import {firebase} from "../../config/FirebaseClient";
+import { AuthActions } from "../../actions/index";
 import * as Notifies from "../../components/Notifies/Notifies";
 import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 import * as Validate from "../../helpers/Validate";
@@ -14,12 +14,15 @@ class Login extends Component {
     super(props);
     this.state = {
       email: "",
+      name: "",
       password: "",
+      phone: "",
       user: "",
       isLoading: false,
       isActiveClass: true,
-      disabledButton: false,
-      textWarningPassword: false
+      textWarningPassword: true,
+      textWarningPhone: true,
+      textWarningName: true
     };
   }
 
@@ -34,34 +37,75 @@ class Login extends Component {
 
   onChange = event => {
     const { name, value } = event.target;
-    this.setState(
-      {
-        [name]: value
-      },
-      () => {
-        this.validatePassword(this.state.password);
-      }
-    );
-  };
-
-  validatePassword = password => {
-    if (Validate.validateStrengthPassword(password)) {
-      this.setState({
-        disabledButton: true,
-        textWarningPassword: false
-      });
-    } else {
-      this.setState({
-        disabledButton: false,
-        textWarningPassword: true
-      });
+    if(name === "phone"){
+      this.onChangePhoneNumber(name, value);
+    }
+    else {
+      this.setState(
+        {
+          [name]: value
+        },
+        () => {
+          this.validateForm({password: this.state.password, number: Number(this.state.phone), name: this.state.name});
+        }
+      );
     }
   };
 
+  onChangePhoneNumber = (name, value) => {
+    if(!Number(value) && value !== ""){ // chỉ cho nhập số
+      return "";
+    }
+    else{
+      this.setState({
+        [name]: value
+      }, () => {
+        this.validateForm({password: this.state.password,  number: Number(this.state.phone), name: this.state.name})
+      })
+    }
+  };
+
+  validateForm = (validateValue) => {
+    const {number, password , name} = validateValue;    
+    if(Validate.validateStrengthPassword(password)){
+      this.setState({
+        textWarningPassword: false
+      });
+    }
+    else {
+      this.setState({
+        textWarningPassword: true
+      });
+    } 
+    if (number){ // check xem có field phone ko 
+      if(Validate.validatePhoneNumber(number)){
+        this.setState({
+          textWarningPhone: false
+        });
+      }
+      else{
+        this.setState({
+          textWarningPhone: true
+        });
+      }
+    }
+    if(name){ // check xem có field name ko
+      if(name !== ""){
+        this.setState({
+          textWarningName: false
+        })
+      }
+    }
+    else {
+      this.setState({
+        textWarningName: true
+      })
+    }
+  }
   userLogin = event => {
     const { email, password } = this.state;
     event.preventDefault();
-    Firebase.auth()
+    firebase.auth()
       .signInWithEmailAndPassword(email, password)
       .catch(error => {
         var errorCode = error.code;
@@ -81,8 +125,31 @@ class Login extends Component {
     const { email, password } = this.state;
     event.preventDefault();
 
-    Firebase.auth()
+    firebase.auth()
       .createUserWithEmailAndPassword(email, password)
+      .then(({user}) => {
+          this.props.actions.createUserAccountRequest({ // tạo account user
+              userUID: user.uid,
+              userInfo: {
+                email: this.state.email,
+                phone: this.state.phone,
+                name: this.state.name,
+              },
+              userDetail: {
+                email: this.state.email,
+                phone: this.state.phone,
+                name: this.state.name,
+              },
+              userRole: {
+                role: "user"
+              },
+              userAccount: {
+                uid: user.uid,
+                creationTime: user.metadata.creationTime,
+                lastSignInTime: user.metadata.lastSignInTime
+              }
+          })
+      })
       .catch(error => {
         var errorCode = error.code;
         var errorMessage = error.message;
@@ -103,15 +170,17 @@ class Login extends Component {
   onAuthStateChanged = () => {
     return new Promise(resolve => {
       setTimeout(() => {
-        Firebase.auth().onAuthStateChanged(user => {
+        firebase.auth().onAuthStateChanged(user => {
           if (user) {
-            this.props.actions.loginAccountSuccess(true);
+            // this.props.actions.loginAccountSuccess(true);
+            localStorage.setItem("userUID", JSON.stringify(user.uid));
             if (this._isMounted) {
               this.setState({
                 user
               });
             }
           } else {
+            localStorage.setItem("userUID", JSON.stringify(null));
             if (this._isMounted) {
               this.setState({
                 user: null
@@ -141,17 +210,29 @@ class Login extends Component {
 
   isActiveLogin = () => {
     this.setState({
-      isActiveClass: true
+      isActiveClass: true,
+      email: "",
+      password: "",
+      phone: "",
+      textWarningPassword: true,
+      textWarningPhone: true,
+      textWarningName: true
     });
   };
   isActiveSignup = () => {
     this.setState({
-      isActiveClass: false
+      isActiveClass: false,
+      email: "",
+      password: "",
+      phone: "",
+      textWarningPassword: true,
+      textWarningPhone: true,
+      textWarningName: true
     });
   };
   render() {
-    const { disabledButton, textWarningPassword, isActiveClass } = this.state;
-    if (this.state.user) return <Redirect to="/user_manager" />;
+    const {  textWarningPassword, isActiveClass, textWarningPhone, textWarningName } = this.state;
+    if (this.state.user) return <Redirect to="/" />;    
     return (
       <div className="login-wrapper">
         {this.state.isLoading ? null : <LoadingSpinner />}
@@ -207,7 +288,9 @@ class Login extends Component {
                         <div className="form-group">
                           <Input
                             placeholder="Email"
+                            value={this.state.email}
                             name="email"
+                            required
                             onChange={this.onChange}
                             autoComplete="on"
                           />
@@ -215,6 +298,7 @@ class Login extends Component {
                         <div className="form-group">
                           <Input.Password
                             placeholder="mật khẩu"
+                            value={this.state.password}
                             name="password"
                             onChange={this.onChange}
                           />
@@ -235,7 +319,7 @@ class Login extends Component {
                         </div>
                         <div className="form-group mt-3">
                           <Button
-                            disabled={disabledButton ? false : true}
+                            disabled={!textWarningPassword ? false : true}
                             htmlType="submit"
                             type="primary"
                             block
@@ -262,7 +346,9 @@ class Login extends Component {
                         <div className="form-group">
                           <Input
                             placeholder="Email"
+                            value={this.state.email}
                             name="email"
+                            required
                             onChange={this.onChange}
                             autoComplete="on"
                           />
@@ -270,6 +356,7 @@ class Login extends Component {
                         <div className="form-group">
                           <Input.Password
                             placeholder="mật khẩu"
+                            value={this.state.password}
                             name="password"
                             onChange={this.onChange}
                           />
@@ -285,9 +372,47 @@ class Login extends Component {
                             ""
                           )}
                         </div>
+                        <div className="form-group">  
+                            <Input
+                              placeholder="Tên thường gọi"
+                              value={this.state.name}
+                              name="name"
+                              autoComplete="off" 
+                              onChange={this.onChange}
+                            />
+                            {textWarningName ? (
+                              <span
+                                style={{ fontSize: "0.75em" }}
+                                className="text-danger"
+                              >
+                                ( Tên bắt buộc )
+                              </span>
+                            ) : (
+                              ""
+                            )}
+                        </div>
+                        <div className="form-group">
+                            <Input 
+                              placeholder="Số điện thoại"
+                              value={this.state.phone}
+                              name="phone"
+                              autoComplete="off"
+                              onChange={this.onChange}
+                            />
+                            {textWarningPhone ? (
+                              <span
+                                style={{ fontSize: "0.75em" }}
+                                className="text-danger"
+                              >
+                                ( Số điện thoại không hợp lệ )
+                              </span>
+                            ) : (
+                              ""
+                            )}
+                        </div>
                         <div className="form-group mt-3">
                           <Button
-                            disabled={disabledButton ? false : true}
+                            disabled={!textWarningPassword && !textWarningPhone && !textWarningName ? false : true}
                             htmlType="submit"
                             type="primary"
                             block
@@ -307,9 +432,11 @@ class Login extends Component {
     );
   }
 }
+
 const mapDispatchToProps = dispatch => {
   return {
-    actions: bindActionCreators(authActions, dispatch)
+    actions: bindActionCreators(AuthActions, dispatch)
   };
 };
+
 export default connect(null, mapDispatchToProps)(Login);

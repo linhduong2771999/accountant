@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Col, Button, Input ,Icon, Row} from "antd";
 import  "./SearchControl.scss";
 import { filterText } from "../../helpers/return";
+import onClickOutside from "react-onclickoutside";
 
 
 class SearchControl extends Component {
@@ -14,6 +15,12 @@ class SearchControl extends Component {
 
         this.searchInput = React.createRef();
       }
+
+    handleClickOutside = (event) => {
+        this.setState({
+          isOpenSuggestion: false
+        })  
+    }
     onHandleSearchChange = (e) => {
         const { value, name } = e.target;
         if(value){
@@ -124,7 +131,12 @@ class SearchControl extends Component {
             />
             {
               isOpenSuggestion ? (
-                <div className="suggestion">
+                <div className="suggestion" onClick={(e) => {
+                  if(!e.target){
+                    console.log("ok");
+                    
+                  }
+                }}>
                   <div className="list-group">
                     {this.renderSuggestion(suggestionValue) }
                   </div>
@@ -148,4 +160,4 @@ class SearchControl extends Component {
   }
 }
 
-export default SearchControl;
+export default onClickOutside(SearchControl);
