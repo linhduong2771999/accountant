@@ -16,7 +16,7 @@ class Login extends Component {
       email: "",
       name: "",
       password: "",
-      phone: "",
+      phone: 0,
       user: "",
       isLoading: false,
       isActiveClass: true,
@@ -53,7 +53,7 @@ class Login extends Component {
   };
 
   onChangePhoneNumber = (name, value) => {
-    if(!Number(value) && value !== ""){ // chỉ cho nhập số
+    if(!Number(value) && value !== "" && Number(value) !== 0){ // chỉ cho nhập số
       return "";
     }
     else{
@@ -130,24 +130,19 @@ class Login extends Component {
       .then(({user}) => {
           this.props.actions.createUserAccountRequest({ // tạo account user
               userUID: user.uid,
+              userRole: {
+                role: "user"
+              },
               userInfo: {
                 email: this.state.email,
                 phone: this.state.phone,
                 name: this.state.name,
+                userAccount: {
+                  uid: user.uid,
+                  creationTime: user.metadata.creationTime,
+                  lastSignInTime: user.metadata.lastSignInTime
+                },
               },
-              userDetail: {
-                email: this.state.email,
-                phone: this.state.phone,
-                name: this.state.name,
-              },
-              userRole: {
-                role: "user"
-              },
-              userAccount: {
-                uid: user.uid,
-                creationTime: user.metadata.creationTime,
-                lastSignInTime: user.metadata.lastSignInTime
-              }
           })
       })
       .catch(error => {

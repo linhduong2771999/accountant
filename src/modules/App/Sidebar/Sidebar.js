@@ -84,8 +84,10 @@ class Sidebar extends Component {
             <div className="user-name">
               <span>Welcome,</span>
               <Tooltip style={{position: "fixed", zIndex: "10"}} onVisibleChange={this.onVisibleChange} visible={isOpenTooltip} placement="right" title={settingIcon}>
-                <p className="text-overflow-custom d-flex align-items-center">
-                  Chào {userInfo ? userInfo.name : "..."} <Icon type="right" style={{ fontSize: "10px", marginLeft: ".25rem" }} />
+                <p className="font-size-14 d-flex align-items-center">
+                  Chào 
+                  {userInfo ? <span className="text-overflow-custom ml-1"> {userInfo.name}</span> : "..."} 
+                  <Icon type="right" style={{ fontSize: "10px", marginLeft: ".25rem" }} />
                 </p>
               </Tooltip>
             </div>

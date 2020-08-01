@@ -1,15 +1,12 @@
 import React, { Component, Fragment } from "react";
 import { Field, reduxForm } from "redux-form";
 import { connect } from "react-redux";
-import { Modal, Button, Upload, Progress, Spin, Select , Input } from "antd";
+import { Modal, Button, Spin, Select , Input } from "antd";
 import { bindActionCreators } from "redux";
 import { ModalPopupActions } from "../../../actions/index";
 import { UserManagerActions } from "../../../actions/index";
-import { v4 as uuidv4 } from "uuid";
 import * as Notifies from "../../../components/Notifies/Notifies";
-import storage from "../../../config/FirebaseClient";
 import { validate } from "../../../helpers/Validate";
-import UserDefaultImage from "../../../assets/img/userImage.png";
 
 const { Option } = Select; 
 
@@ -32,126 +29,159 @@ const renderField = ({
 const renderSelectField = ({
   input,
   className,
+  onChange,
   meta: { touched, error },
   children,
 }) => (
   <Fragment>
-    <Select className={className} {...input}>
+    <Select getPopupContainer={trigger => trigger.parentNode} onChange={onChange} className={className} {...input}>
       {children}
     </Select>
     {touched && error && <span className="text-validate">{error}</span>}
   </Fragment>
 );
+
+const changeOptions = [
+  {
+    OptionType: "Quản lý",
+    OptionValue: ["Quản lý dự án", "Quản lý nhân sự", "Quản lý tài chính"]
+  },
+  {
+    OptionType: "IT",
+    OptionValue: ["Frontend (Web)", "Backend (Web)", "Thiết kế đồ họa", "An ninh mạng", "Kỹ sư cơ sở dữ liệu", "Hỗ trợ máy tính"]
+  },
+  {
+    OptionType: "Tài chính",
+    OptionValue: ["Kế toán", "Marketing"]
+  },
+]
 class UserManagerForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedImg: null,
-      imgInfo: null,
-      progress: 0,
-      isProgress: false,
-      userInfo: {
-        id: "",
-      },
+      // selectedImg: null,
+      // imgInfo: null,
+      // progress: 0,
+      // isProgress: false,
+      major: "",
+      userUID: "", // dùng trong giai đoạn khởi tạo
+      selectOptionType: "",
+      validateMajor: false
     };
   }
 
-  submitValue = (value) => {
-    this.setState({
-      progress: 0,
-      isProgress: true,
-    });
-      this.handleUpload(value);
-  };
-
-  handleChange = (info) => {
-    this.setState({
-      selectedImg: URL.createObjectURL(info.file.originFileObj),
-      imgInfo: info.file.originFileObj,
-    });
-  };
-
-  // upload file to firebase storage
-  handleUpload = (value) => {
-    var { imgInfo } = this.state;
-    const { userById } = this.props;
-    if (imgInfo === null) {
-      if(userById.id){
-        this.updateUserManagerAPI(userById.id, value, UserDefaultImage);
+  static getDerivedStateFromProps = (nextProps, prevState) => {
+    if(nextProps.userById && nextProps.userById.userUID !== prevState.userUID){
+      return {
+        userUID: nextProps.userById.userUID,
+        selectOptionType: nextProps.userById.userInfo.position,
+        major: nextProps.userById.userInfo.major
       }
-      else{
-        this.createUserManagerAPI(value, UserDefaultImage); 
-      }
-      this.actionsAfterSubmit();
-    } else {
-      var storageRef = storage.ref();
-      var uploadTask = storageRef.child("images/" + imgInfo.name).put(imgInfo);
-
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-          var progress = Math.round(
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          );
-          this.setState({
-            progress,
-          });
-        },
-        (error) => {
-          console.log(error);
-        },
-        () => {
-          uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-            if(userById.id){
-              this.updateUserManagerAPI(userById.id, value, downloadURL);
-            }
-            else{
-              this.createUserManagerAPI(value, downloadURL);
-            }
-            this.actionsAfterSubmit();
-          });
-        }
-      );
     }
-  };
 
-  createUserManagerAPI = (value, paramAvatar) => {
-    const id = uuidv4();
-    const { createUserManagerRequest } = this.props.actions;
-    createUserManagerRequest({
-      userInfo: {
-        id: id,
-        name: value.name || "",
-        email: value.email || "",
-        position: value.position || "",
-        level: value.level || "",
-        major: value.major || "",
-        phone: value.phone || "",
-        avatarURL: paramAvatar,
-      },
-      callback: () => {
-        return Notifies.createSuccess();
-      },
-      fallback: () => {
-        return Notifies.errorMessege();
-      },
-    });
+    return null
   }
 
-  updateUserManagerAPI = (id, value, paramAvatar) => {
+  submitValue = (value) => {
+    // this.setState({
+    //   progress: 0,
+    //   isProgress: true,
+    // });
+    this.updateUserManagerAPI(value);
+    this.actionsAfterSubmit();
+  };
+
+  // handleChange = (info) => {
+  //   this.setState({
+  //     selectedImg: URL.createObjectURL(info.file.originFileObj),
+  //     imgInfo: info.file.origin11FileObj,
+  //   });
+  // };
+
+  // upload file to firebase storage
+  // handleUpload = (value) => {
+  //   var { imgInfo } = this.state;
+  //   const { userById } = this.props;
+  //   if (imgInfo === null) {
+  //     if(userById.id){
+  //       this.updateUserManagerAPI(userById.id, value, UserDefaultImage);
+  //     }
+  //     else{
+  //       // this.createUserManagerAPI(value, UserDefaultImage); 
+  //     }
+  //     this.actionsAfterSubmit();
+  //   } else {
+  //     var storageRef = storage.ref();
+  //     var uploadTask = storageRef.child("images/" + imgInfo.name).put(imgInfo);
+
+  //     uploadTask.on(
+  //       "state_changed",
+  //       (snapshot) => {
+  //         // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+  //         var progress = Math.round(
+  //           (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+  //         );
+  //         this.setState({
+  //           progress,
+  //         });
+  //       },
+  //       (error) => {
+  //         console.log(error);
+  //       },
+  //       () => {
+  //         uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+  //           if(userById.id){
+  //             this.updateUserManagerAPI(userById.id, value, downloadURL);
+  //           }
+  //           else{
+  //             // this.createUserManagerAPI(value, downloadURL);
+  //           }
+  //           this.actionsAfterSubmit();
+  //         });
+  //       }
+  //     );
+  //   }
+  // };
+
+  // createUserManagerAPI = (value, paramAvatar) => {
+  //   const id = uuidv4();
+  //   const { createUserManagerRequest } = this.props.actions;
+  //   createUserManagerRequest({
+  //     userInfo: {
+  //       id: id,
+  //       name: value.name || "",
+  //       email: value.email || "",
+  //       position: value.position || "",
+  //       level: value.level || "",
+  //       major: value.major || "",
+  //       phone: value.phone || "",
+  //       avatarURL: paramAvatar,
+  //     },
+  //     callback: () => {
+  //       return Notifies.createSuccess();
+  //     },
+  //     fallback: () => {
+  //       return Notifies.errorMessege();
+  //     },
+  //   });
+  // }
+
+  updateUserManagerAPI = (value) => {
     const { updateUserManagerRequest } = this.props.actions;
+    const {userInfo, userRole, userUID} = value;    
     updateUserManagerRequest({
       userInfo: {
-        id: id,
-        name: value.name || "",
-        email: value.email || "",
-        position: value.position || "",
-        level: value.level || "",
-        major: value.major || "",
-        phone: value.phone || "",
-        avatarURL: paramAvatar,
+        name: userInfo.name || "",
+        email: userInfo.email || "",
+        position: userInfo.position || "",
+        major: this.state.major || "",
+        status: userInfo.status || "",
+        phone: userInfo.phone || "",
       },
+      userRole: {
+        role: userRole.role || ""
+      },
+      userUID: userUID,
       callback: () => {
         return Notifies.updateSuccess();
       },
@@ -162,11 +192,11 @@ class UserManagerForm extends Component {
   }
 
   actionsAfterSubmit = () => {
-    this.setState({
-      isProgress: false,
-      selectedImg: null,
-      imgInfo: null
-    });
+    // this.setState({
+    //   isProgress: false,
+    //   selectedImg: null,
+    //   imgInfo: null
+    // });
     this.props.actions.hideModal(false);
   }
 
@@ -178,8 +208,55 @@ class UserManagerForm extends Component {
     this.props.actions.hideModal(false);
   };
 
+  handleSelectPositionChange = (value) => {
+    this.setState({
+      selectOptionType: value,
+      major: ""
+    }, () => this.validateFieldMajor(this.state.major)) 
+  }
+
+  handleSelectMajorChange = (value) => {
+    this.setState({
+      major: value
+    }, () => this.validateFieldMajor(this.state.major))
+  }
+
+  renderSelectFieldOptions = (selectOptionType) => {
+    let result = null;
+    result = changeOptions.map((item, index1) => {
+      if(selectOptionType === item.OptionType){
+        return <Select 
+                  getPopupContainer={trigger => trigger.parentNode} 
+                  key={index1} 
+                  onChange={this.handleSelectMajorChange} 
+                  defaultValue="Chuyên môn"  
+                  value={this.state.major}
+                >
+                    {item.OptionValue.map((value, index2) => {
+                      return <Option value={value} key={index2}>{value}</Option>
+                    })}
+              </Select>
+      }
+      else{
+        return null
+      }
+    })
+    return result
+  }
+
+  validateFieldMajor = (value) => {
+    if(value === "") {
+      this.setState({
+        validateMajor: true
+      })
+    } else{ 
+      this.setState({
+        validateMajor: false
+      })
+    }
+  }
   render() {
-    const { handleSubmit, isOpenModal, isAddUser, isLoading } = this.props;
+    const { handleSubmit, isOpenModal, isAddUser, isLoading, userById } = this.props;
     const { selectedImg, progress, isProgress } = this.state;
     return (
       <Modal
@@ -220,7 +297,7 @@ class UserManagerForm extends Component {
             <div className="col-12 mb-2">
               <div className="form-group row">
                 <label
-                  className="col-2 text-right control-label font-weight-bold"
+                  className="col-2 py-1 text-right control-label font-weight-bold"
                   htmlFor="name"
                 >
                   Tên* :
@@ -228,7 +305,7 @@ class UserManagerForm extends Component {
                 <div className="col-10">
                   <Field
                     placeholder="Tên"
-                    name="name"
+                    name="userInfo.name"
                     autoComplete="off"
                     type="text"
                     component={renderField}
@@ -239,49 +316,42 @@ class UserManagerForm extends Component {
             <div className="col-12 mb-2">
               <div className="form-group row">
                 <label
-                  className="col-2 text-right control-label font-weight-bold"
-                  htmlFor="email"
-                >
-                  Email* :
-                </label>
-                <div className="col-10">
-                  <Field
-                    placeholder="Email"
-                    name="email"
-                    component={renderField}
-                    type="email"
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="col-12 mb-2">
-              <div className="form-group row">
-                <label
-                  className="col-2 control-label text-right font-weight-bold"
+                  className="col-2 py-1 control-label text-right font-weight-bold"
                   htmlFor="position"
                 >
-                  Chức vụ* :
+                  Vị trí* :
                 </label>
                 <div className="col-4">
                   <Field
-                    name="position"
+                    name="userInfo.position"
                     component={renderSelectField}
+                    onChange={this.handleSelectPositionChange}
                   >
-                    <Option value="">Chức vụ</Option>
-                    <Option value="Sếp">Sếp</Option>
-                    <Option value="Nhân viên">Nhân viên</Option>
-                    <Option value="Kế toán">Kế toán</Option>
+                    <Option value="">Vị trí</Option>
+                    <Option value="Quản lý">Quản lý</Option>
+                    <Option value="IT">IT</Option>
+                    <Option value="Tài chính">Tài chính</Option>
                   </Field>
+                </div>
+                <label
+                      className="col-2 py-1 control-label text-right font-weight-bold"
+                      htmlFor="major"
+                    >
+                  Chính* :
+                </label>
+                <div   className="col-4">
+                    { this.state.selectOptionType ? this.renderSelectFieldOptions(this.state.selectOptionType) : <Select defaultValue="Vui lòng chọn vị trí"></Select>}
+                    {this.state.validateMajor ? <p className="text-danger font-size-14 mb-0">Chuyên môn bắt buộc</p> : null}
                 </div>
               </div>
             </div>
-            <div className="col-12 mb-2">
+            {/*<div className="col-12 mb-2">
               <div className="form-group row">
                 <label
                   className="col-2 control-label text-right font-weight-bold"
                   htmlFor="level"
                 >
-                  Tình trạng :
+                  Chuyên môn :
                 </label>
                 <div className="col-4">
                   <Field
@@ -298,8 +368,8 @@ class UserManagerForm extends Component {
                   </Field>
                 </div>
               </div>
-            </div>
-            <div className="col-12 mb-2">
+            </div>*/}
+            {/*<div className="col-12 mb-2">
               <div className="form-group row">
                 <label
                   className="col-2 text-right control-label font-weight-bold"
@@ -312,22 +382,62 @@ class UserManagerForm extends Component {
                     placeholder="Chuyên môn (Nhập rõ)"
                     name="major"
                     component={renderField}
-                  />
+                />
+                </div>
+              </div>
+            </div>*/}
+            <div className="col-12 mb-2">
+              <div className="form-group row">
+                <label
+                  className="col-2 py-1 text-right control-label font-weight-bold"
+                  htmlFor="role"
+                >
+                  Vai trò* :
+                </label>
+                <div className="col-4">
+                  <Field
+                      name="userRole.role"
+                      component={renderSelectField}
+                  >
+                    <Option value="">Vai trò</Option>
+                    <Option value="user">Người dùng</Option>
+                    <Option value="admin">Quản trị viên</Option>
+                  </Field>
                 </div>
               </div>
             </div>
             <div className="col-12 mb-2">
               <div className="form-group row">
                 <label
-                  className="col-2 text-right control-label font-weight-bold"
+                  className="col-2 py-1 text-right control-label font-weight-bold"
+                  htmlFor="role"
+                >
+                  Tình trạng* :
+                </label>
+                <div className="col-4">
+                  <Field
+                      name="userInfo.status"
+                      component={renderSelectField}
+                  > 
+                    <Option value="">Chọn tình trạng</Option>
+                    <Option value={0}>Tạm nghỉ</Option>
+                    <Option value={1}>Đang hoạt động</Option>
+                  </Field>
+                </div>
+              </div>
+            </div>
+            <div className="col-12 mb-2">
+              <div className="form-group row">
+                <label
+                  className="col-2 py-1 text-right control-label font-weight-bold"
                   htmlFor="phone"
                 >
                   Điện thoại* :
                 </label>
-                <div className="col-10">
+                <div className="col-4">
                   <Field
                     placeholder="Số điện thoại"
-                    name="phone"
+                    name="userInfo.phone"
                     component={renderField}
                     type="number"
                     autoComplete="off"
@@ -335,7 +445,7 @@ class UserManagerForm extends Component {
                 </div>
               </div>
             </div>
-            <div className="col-12 mb-2">
+            {/*<div className="col-12 mb-2">
               <div className="form-group row">
                 <label
                   className="col-2 text-right control-label font-weight-bold"
@@ -363,9 +473,10 @@ class UserManagerForm extends Component {
                   </div>
                 </div>
               </div>
-            </div>
+          </div>*/}
           </div>
         </form>
+        {/*
         {isProgress ? (
           <div>
             <Progress percent={progress} className="progress-ant-custom" />
@@ -373,7 +484,7 @@ class UserManagerForm extends Component {
           </div>
         ) : (
           ""
-        )}
+        )} */}
       </Modal>
     );
   }
@@ -385,6 +496,7 @@ const mapStateToProps = (state) => {
     isOpenModal: state.modalPopupReducer.isOpenModal,
     isAddUser: state.modalPopupReducer.isAddUser,
     initialValues: state.userManagerReducer.userById,
+    userById: state.userManagerReducer.userById,
     isLoading: state.userManagerReducer.isLoading,
   };
 };

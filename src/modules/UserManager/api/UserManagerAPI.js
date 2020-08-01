@@ -1,19 +1,15 @@
 import callAPI from "../../../helpers/callAPI";
 
 export const getUserManager = () => {
-    return callAPI("user", "GET", null);
-}
-
-export const getOneUserManager = (id) => {
-    return callAPI(`user/${id}`, "GET", null)
+    return callAPI("members", "GET", null);
 }
 
 export const createUserManager = (user) => {
     return callAPI(`user/${user.id}`, "PUT", user); // tạo tên user bởi id 
 }
 
-export const updateUserManager = (user) => {
-    return callAPI(`user/${user.id}`, "PUT", user);
+export const updateUserManager = (data) => {
+    return callAPI(`members/${data.userUID}`, "PATCH", {...data});
 }
 
 export const deleteUserManager = (user) => {

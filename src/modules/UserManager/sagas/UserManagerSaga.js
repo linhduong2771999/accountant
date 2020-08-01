@@ -16,18 +16,6 @@ function* handleFetchUserManagerRequest(action){
     }
 }
 
-function* handleFetchOneUserManagerRequest(action){
-    try{
-        const { data, statusText } = yield call(UserManagerAPI.getOneUserManager, action.payload);
-        if(statusText === "OK"){
-            yield put(UserManagerActions.fetchOneUserManagerSuccess(data));
-        }
-    }
-    catch (error){
-        yield put(UserManagerActions.fetchOneUserManagerError(error));
-    }
-}
-
 function* handleCreateUserManagerRequest(action){
     const {userInfo, callback, fallback} = action.payload;
     try{
@@ -45,9 +33,9 @@ function* handleCreateUserManagerRequest(action){
 }
 
 function* handleUpdateUserManagerRequest(action){
-    const {userInfo, callback, fallback} = action.payload;
+    const {userInfo, userRole, userUID,  callback, fallback} = action.payload;
     try{
-        const {data, statusText} = yield call(UserManagerAPI.updateUserManager, userInfo );     
+        const {data, statusText} = yield call(UserManagerAPI.updateUserManager, {userRole, userInfo, userUID} );     
         if(statusText === "OK"){
             yield put(UserManagerActions.updateUserManagerSuccess(data));
             yield callback && callback();
@@ -76,10 +64,6 @@ function* fetchUserManagerRequest() {
     yield takeEvery(UserManagerActions.fetchUserManagerRequest, handleFetchUserManagerRequest);
 }
 
-function* fetchOneUserManagerRequest() {
-    yield takeEvery(UserManagerActions.fetchOneUserManagerRequest, handleFetchOneUserManagerRequest);
-}
-
 function* createUserManagerRequest() {
     yield takeEvery(UserManagerActions.createUserManagerRequest, handleCreateUserManagerRequest);
 }
@@ -95,7 +79,6 @@ function* deleteUserManagerRequest() {
 export default {
     fetchUserManagerRequest,
     createUserManagerRequest,
-    fetchOneUserManagerRequest,
     updateUserManagerRequest,
     deleteUserManagerRequest
 }

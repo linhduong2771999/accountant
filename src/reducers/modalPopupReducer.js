@@ -20,13 +20,7 @@ export default handleActions(
                 isOpenModal: action.payload
             }
         },
-        [actions.addModal]: (state, action) => {
-            return {
-                ...state,
-                isAddUser: action.payload
-            }
-        },
-        [actions.editModal]: (state, action) => {
+        [actions.isAddModal]: (state, action) => {
             return {
                 ...state,
                 isAddUser: action.payload

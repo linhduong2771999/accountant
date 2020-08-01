@@ -4,7 +4,7 @@ import * as actions from '../actions/UserManagerAction';
 const initialState = {
     userList: [],
     userById: {
-        id: ""
+        userUID: ""
     },
     isLoading: false,
     searchText: "",
@@ -20,9 +20,9 @@ export default handleActions(
             }
         },
         [actions.fetchUserManagerSuccess]: (state, action) => {
-            const {payload} = action;
+            const {payload} = action; // payload = user
             if(payload){
-                const data = Object.values(payload)
+                const data = Object.values(payload) // chuyển dãy đối tượng thành mảng
                 return {
                     ...state,
                     isLoading: false,
@@ -37,26 +37,6 @@ export default handleActions(
             }
         },
         [actions.fetchUserManagerError]: (state, action) => {
-            return {
-                ...state,
-                isLoading: false
-            }
-        },
-        [actions.fetchOneUserManagerRequest]: (state, action) => {
-            return{
-                ...state,
-                isLoading: true
-            }
-        },
-        [actions.fetchOneUserManagerSuccess]: (state, action) => {
-            const {payload} = action;
-            return {
-                ...state,
-                isLoading: false,
-                oneUser: {...payload}
-            }
-        },
-        [actions.fetchOneUserManagerError]: (state, action) => {
             return {
                 ...state,
                 isLoading: false
@@ -92,8 +72,8 @@ export default handleActions(
         [actions.updateUserManagerSuccess]: (state, action) => {
             const {payload} = action;
             const temp = state.userList;
-            const index = temp.findIndex((item) => item.id === payload.id);
-            temp[index] = payload;
+            const index = temp.findIndex((item) => item.userUID === payload.userUID);
+            temp[index] = {...payload};
             return {
                 ...state,
                 isLoading: false,
@@ -128,13 +108,13 @@ export default handleActions(
             }
         },
         [actions.getUserByIdUserManager]: (state, action) => {
-            const id = action.payload;
+            const userUID = action.payload;
             const temp = state.userList;
-            const index = temp.findIndex((user) => user.id === id);
-            var data = state.userById;
+            const index = temp.findIndex((user) => user.userUID === userUID);
+            let data = state.userById;
             if(temp[index]){
                 data = temp[index] 
-            }
+            }            
             return {
                 ...state,
                 userById: data

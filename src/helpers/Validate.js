@@ -28,6 +28,9 @@ export const validate = values => {
     if (!values.position) {
       errors.position = 'Chức vụ bắt buộc'
     } 
+    if (!values.role) {
+      errors.role = 'Vai trò bắt buộc'
+    }
     if(!/^\d{10}$/.test(values.phone)){
       errors.phone = 'Số điện thoại không hợp lệ'
     }

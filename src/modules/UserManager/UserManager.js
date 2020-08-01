@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from "react";
-import { Row, Col, Button, Tooltip } from "antd";
+import { Row, Col, Button, Tooltip, Tag } from "antd";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { reduxForm } from "redux-form";
@@ -12,6 +12,7 @@ import UserManagerForm from "./UserManagerForm/UserManagerForm";
 import SearchControl from "../../components/SearchControl/SearchControl";
 import CSVDownload from "../../components/CSVDownload/CSVDownload";
 import UserImage from "../../assets/img/userImage.png";
+
 class UserManager extends Component {
   constructor(props) {
     super(props);
@@ -55,21 +56,19 @@ class UserManager extends Component {
     // });
   };
 
-  onHandleOpenModal = (type, id) => {
+  onHandleOpenModal = (type, userUID) => {
     const {
       openModal,
-      addModal,
+      isAddModal,
       getUserByIdUserManager,
     } = this.props.actions;
     openModal(true);
     if (type === "add") {
-      addModal(true);
+      isAddModal(true);
       getUserByIdUserManager("");
-      // fetchOneUserManagerRequest("");
     } else {
-      addModal(false);
-      getUserByIdUserManager(id);
-      // fetchOneUserManagerRequest(id);
+      isAddModal(false);
+      getUserByIdUserManager(userUID);
     }
   };
 
@@ -79,28 +78,37 @@ class UserManager extends Component {
   };
 
   onHandleOpenDeleteBox = (id) => {
-    this.props.actions.fetchOneUserManagerRequest(id);
-    Notifies.deleteSuccess(this.deleteUserAPI);
+  //   admin.auth().deleteUser()
+  // .then(function() {
+  //   console.log('Successfully deleted user');
+  // })
+  // .catch(function(error) {
+  //   console.log('Error deleting user:', error);
+  // });
+    
+    // this.props.actions.fetchOneUserManagerRequest(id);
+    // Notifies.deleteSuccess(this.deleteUserAPI);
   };
 
   render() {
-    var { userList, searchText, userById } = this.props;
-    const suggestionValue = userList;
-    const actionsColumns = (id) => (
+    var { searchText, userById } = this.props;
+    var { userList } = this.props.stateOfUserManagerReducer;
+    const suggestionValue = userList; 
+    const actionsColumns = (userUID) => (
       <Row>
         <Tooltip placement="top" title="Sửa">
           <Button
             style={{ marginRight: "1rem" }}
             icon="edit"
             type="default"
-            onClick={() => this.onHandleOpenModal("edit", id)}
+            onClick={() => this.onHandleOpenModal("edit", userUID)}
           ></Button>
         </Tooltip>
         <Tooltip placement="top" title="Xóa">
           <Button
             icon="delete"
             type="danger"
-            onClick={() => this.onHandleOpenDeleteBox(id)}
+            onClick={() => this.onHandleOpenDeleteBox(userUID)}
           ></Button>
         </Tooltip>
       </Row>
@@ -109,80 +117,121 @@ class UserManager extends Component {
     const columns = [
       {
         title: "Avatar",
+        dataIndex: "userInfo",
+        key: "avatarURL",
         align: "center",
-        dataIndex: "avatarURL",
-        render: (avatarURL) => {
-          return (
-            <img
-              className="avatar-user-table"
-              alt="..."
-              src={avatarURL ? avatarURL : UserImage}
-            />
-          );
+        width: 100,
+        render: (userInfo) => {
+          return <img className="avatar-user-table" alt="..." src={userInfo.avatarURL ? userInfo.avatarURL : UserImage} />;
         },
-        width: 100
       },
       {
         title: "Tên",
-        dataIndex: "name",
-        render: (name) => {
-          return <span className="text-primary text-capitalize">{name}</span>;
+        dataIndex: "userInfo",
+        key: "name",
+        render: (userInfo) => {
+          return <span className="text-primary text-capitalize">{userInfo.name ? userInfo.name : "Chưa có"}</span>;
         },
         sorter: (a, b) => {
-          return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
-        },
-      },
-      {
-        title: "Chức vụ",
-        dataIndex: "position",
-        render: (position) => {
-          return (
-            <span style={{ textTransform: "capitalize" }}>{position}</span>
-          );
-        },
-        sorter: (a, b) => {
-          return a.position
-            .toLowerCase()
-            .localeCompare(b.position.toLowerCase());
-        },
-      },
-      {
-        title: "Trình độ",
-        dataIndex: "level",
-        render: (level) => (
-          <span style={{ textTransform: "capitalize" }}>{level}</span>
-        ),
-        sorter: (a, b) => {
-          return a.level.toLowerCase().localeCompare(b.level.toLowerCase());
-        },
-      },
-      {
-        title: "Chuyên môn",
-        dataIndex: "major",
-        sorter: (a, b) => {
-          return a.major.toLowerCase().localeCompare(b.major.toLowerCase());
-        },
-      },
-      {
-        title: "Số dt",
-        dataIndex: "phone",
-        sorter: (a, b) => {
-          return a.phone - b.phone;
+            return a. userInfo.name.toLowerCase().localeCompare(b.userInfo.name.toLowerCase());
         },
       },
       {
         title: "Email",
-        dataIndex: "email",
-        width: 250,
+        dataIndex: "userInfo.email",
+        key: "email",
+        width: 250, 
         sorter: (a, b) => {
-          return a.email.toLowerCase().localeCompare(b.email.toLowerCase());
+          if(a.userInfo.email && b.userInfo.email)
+          return a.userInfo.email.toLowerCase().localeCompare(b.userInfo.email.toLowerCase());
         },
       },
       {
-        title: "Xử lý tác vụ",
-        dataIndex: "id",
-        render: (id) => {
-          return actionsColumns(id);
+        title: "Vị trí",
+        dataIndex: "userInfo",
+        key: "position",
+        render: (userInfo) => {
+          return (
+              userInfo.position ? 
+                <span className="text-capitalize">{userInfo.position}</span>
+              : <span className="text-warning">Chưa có</span>
+            
+          );
+        },
+        sorter: (a, b) => {
+          if(a.userInfo.position && b.userInfo.position) 
+          return a.userInfo.position.toLowerCase().localeCompare(b.userInfo.position.toLowerCase());
+        },
+      },
+      {
+        title: "Chuyên môn",
+        dataIndex: "userInfo",
+        key: "major",
+        render: (userInfo) => {
+          return (
+                userInfo.major ? 
+                <span className="text-capitalize">{userInfo.major}</span>
+              : <span className="text-warning">Chưa có</span>
+          )
+        },
+        sorter: (a, b) => {
+          if(a.userInfo.major && b.userInfo.major)
+          return a.userInfo.major.toLowerCase().localeCompare(b.userInfo.major.toLowerCase());
+        },
+      },
+      {
+        title: "Số dt",
+        dataIndex: "userInfo",
+        key: "phone",
+        render: (userInfo) => {
+            return userInfo.phone ?
+                    <span className="text-capitalize">{userInfo.phone}</span>
+                  : <span className="text-warning">Chưa có</span>
+        },
+        sorter: (a, b) => {
+          if(a.userInfo.phone && b.userInfo.phone)
+          return a.userInfo.phone - b.userInfo.phone;
+        },
+      },
+      {
+        title: "Vai trò",
+        dataIndex: "userRole",
+        key: "role",  
+        render: (userRole) => {
+          return (
+              userRole.role === "admin" ? 
+                <span className="text-capitalize">Quản trị viên</span>
+              : <span className="text-capitalize">Người dùng</span>
+          )
+        },
+        // sorter: (a, b) => {
+        //   if(a.userInfo.level && a.userInfo.level)
+        //   return a.userInfo.level.toLowerCase().localeCompare(b.userInfo.level.toLowerCase());
+        // },
+      },
+      {
+        title: "Tình trạng",
+        dataIndex: "userInfo",
+        key: "status",  
+        render: (userInfo) => {
+          return (
+                  userInfo.status ? 
+                <Tag color="lime" className="text-capitalize">Đang Hoạt động</Tag>
+              : <Tag color="cyan" className="text-warning">Tạm nghỉ</Tag>
+          )
+        },
+        // sorter: (a, b) => {
+        //   if(a.userInfo.level && a.userInfo.level)
+        //   return a.userInfo.level.toLowerCase().localeCompare(b.userInfo.level.toLowerCase());
+        // },
+      },
+      {
+        title: "Tác vụ",
+        dataIndex: "userUID",
+        render: (userUID) => {
+          return (
+            actionsColumns(userUID)
+          );
         },
       },
     ];
@@ -221,7 +270,6 @@ class UserManager extends Component {
         return data;
       });
     }
-
     return (
       <Fragment>
         <Row gutter={[0, { xs: 32, sm: 32, md: 32, xl: 32 }]}>
@@ -233,14 +281,14 @@ class UserManager extends Component {
           </Col>
           <Col xs={24} sm={24} md={16} lg={8} xl={14}>
             <Row type="flex" justify="end">
-              <Button
+              {/*<Button
                 className="user-manager_button"
                 icon="user"
                 type="primary"
                 onClick={() => this.onHandleOpenModal("add")}
               >
                 Thêm mới
-              </Button>
+              </Button>*/}
               <CSVDownload userList={userList} />
             </Row>
           </Col>
@@ -261,11 +309,11 @@ class UserManager extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    userList: state.userManagerReducer.userList,
     isLoading: state.userManagerReducer.isLoading,
     searchText: state.userManagerReducer.searchText,
     userById: state.userManagerReducer.userById,
     sortArray: state.userManagerReducer.sortArray,
+    stateOfUserManagerReducer: state.userManagerReducer
   };
 };
 
