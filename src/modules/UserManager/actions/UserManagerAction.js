@@ -8,15 +8,6 @@ export const fetchUserManagerRequest = createAction(FETCH_USER_MANAGER_REQUEST);
 export const fetchUserManagerSuccess = createAction(FETCH_USER_MANAGER_SUCCESS);
 export const fetchUserManagerError = createAction(FETCH_USER_MANAGER_ERROR);
 
-const FETCH_ONE_USER_MANAGER_REQUEST = "FETCH_ONE_USER_MANAGER_REQUEST";
-const FETCH_ONE_USER_MANAGER_SUCCESS = "FETCH_ONE_USER_MANAGER_SUCCESS";
-const FETCH_ONE_USER_MANAGER_ERROR = "FETCH_ONE_USER_MANAGER_ERROR";
-
-export const fetchOneUserManagerRequest = createAction(FETCH_ONE_USER_MANAGER_REQUEST);
-export const fetchOneUserManagerSuccess = createAction(FETCH_ONE_USER_MANAGER_SUCCESS);
-export const fetchOneUserManagerError = createAction(FETCH_ONE_USER_MANAGER_ERROR);
-
-
 const CREATE_USER_MANAGER_REQUEST = "CREATE_USER_MANAGER_REQUEST";
 const CREATE_USER_MANAGER_SUCCESS = "CREATE_USER_MANAGER_SUCCESS";
 const CREATE_USER_MANAGER_ERROR = "CREATE_USER_MANAGER_ERROR";

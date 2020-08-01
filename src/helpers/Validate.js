@@ -7,6 +7,11 @@ export const  validateStrengthPassword = (password) => {
     return (re.test(password) && re1.test(password) && re2.test(password) && re3.test(password));
 }
 
+export const validatePhoneNumber = (number) => {
+  const re = /^\d{10}$/ ;
+  return re.test(number);
+}
+
 // validate form
 export const validate = values => {
     const errors = {}
@@ -23,6 +28,9 @@ export const validate = values => {
     if (!values.position) {
       errors.position = 'Chức vụ bắt buộc'
     } 
+    if (!values.role) {
+      errors.role = 'Vai trò bắt buộc'
+    }
     if(!/^\d{10}$/.test(values.phone)){
       errors.phone = 'Số điện thoại không hợp lệ'
     }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {Redirect, Route} from "react-router-dom";
-import Firebase from "../config/FirebaseClient"
+import {firebase} from "../config/FirebaseClient"
 import {withRouter} from "react-router-dom";
 import * as storeService from "../sagas/storeService";
 class ScrollToTopAndPrivateRoute extends Component {
@@ -15,13 +15,17 @@ class ScrollToTopAndPrivateRoute extends Component {
       }
     render() {
         const {component: Component, ...rest} = this.props;
-        var user = Firebase.auth().currentUser;
-        // console.log(user)
-        // const isAuthenticated = storeService.getGlobalState();
+        var user = firebase.auth().currentUser;
+        const {authReducers} = storeService.getGlobalState();
         // console.log(isAuthenticated[0].isAuthenticated);
+        // console.log(authReducers.isAuthenticated);
+        const userUID = localStorage.getItem("userUID");
+        // console.log(JSON.parse(userUID));
+        
         return (
           <Route {...rest} render={(props) => (
-            user !== null
+            // user !== null
+            JSON.parse(userUID) !== null
             // isAuthenticated[0].isAuthenticated
                   ? <Component {...props} />
                   : <Redirect to={{

@@ -7,15 +7,25 @@ const { SubMenu } = Menu;
 
 const settingIcon = (
   <span className="setting-icon">
-    Setting <Icon type="setting" />
+    Hồ sơ cá nhân <Icon type="setting" />
   </span>
 )
 class Sidebar extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      collapsed: false
+      collapsed: false,
+      isOpenTooltip: true
     };
+  }
+
+  componentDidMount = () => {
+    this._isMounted = true;
+    this.hideTooltip();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   onCollapse = collapsed => {
@@ -28,10 +38,28 @@ class Sidebar extends Component {
       }
     );
   };
-  
+    
+
+  hideTooltip = () => {
+    setTimeout(() => {
+      if(this._isMounted){
+        this.setState({
+          isOpenTooltip: false
+        })
+      }
+    }, 3000)
+  }
+
+  onVisibleChange = (visible) => {
+    this.setState({
+      isOpenTooltip: visible
+    })
+  }
   render() {
-    const { collapsed } = this.state;
-    const { location } = this.props;
+    const { collapsed, isOpenTooltip } = this.state;
+    const {location} = this.props;
+    const { userInfo, userRole } = this.props.userProfile;
+    
     return (
       <Sider
         style={{
@@ -55,9 +83,11 @@ class Sidebar extends Component {
           ) : (
             <div className="user-name">
               <span>Welcome,</span>
-              <Tooltip placement="right" title={settingIcon}>
-                <p>
-                  Jessica <Icon type="right" style={{ fontSize: "10px" }} />
+              <Tooltip style={{position: "fixed", zIndex: "10"}} onVisibleChange={this.onVisibleChange} visible={isOpenTooltip} placement="right" title={settingIcon}>
+                <p className="font-size-14 d-flex align-items-center">
+                  Chào 
+                  {userInfo ? <span className="text-overflow-custom ml-1"> {userInfo.name}</span> : "..."} 
+                  <Icon type="right" style={{ fontSize: "10px", marginLeft: ".25rem" }} />
                 </p>
               </Tooltip>
             </div>
@@ -85,28 +115,30 @@ class Sidebar extends Component {
               <span>Bảng điều khiển  </span>
             </Link>
           </Menu.Item>
-          <SubMenu
-            key="sub1"
-            title={
-              <span>
-                <Icon type="user" />
-                <span>Quản trị viên</span>
-              </span>
-            }
-          >
-            <Menu.Item key="/accounting">
-              <Link to="/accounting">Quản lý kế toán</Link>
-            </Menu.Item>
-            <Menu.Item key="/user_manager">
-              <Link to="/user_manager">Quản lý người dùng</Link>
-            </Menu.Item>
-            <Menu.Item key="/work_manager">
-              <Link to="/work_manager">Quản lý công việc</Link>
-            </Menu.Item>
-            <Menu.Item key="/notification_manager">
-              <Link to="/notification_manager">Quản lý thông báo</Link>
-            </Menu.Item>
-          </SubMenu>
+          {userRole ? userRole.role === "admin" ? (
+            <SubMenu
+              key="sub1"
+              title={
+                <span>
+                  <Icon type="user" />
+                  <span>Quản trị viên</span>
+                </span>
+              }
+            >
+              <Menu.Item key="/accounting">
+                <Link to="/accounting">Quản lý kế toán</Link>
+              </Menu.Item>
+              <Menu.Item key="/user_manager">
+                <Link to="/user_manager">Quản lý người dùng</Link>
+              </Menu.Item>
+              <Menu.Item key="/work_manager">
+                <Link to="/work_manager">Quản lý công việc</Link>
+              </Menu.Item>
+              <Menu.Item key="/notification_manager">
+                <Link to="/notification_manager">Quản lý thông báo</Link>
+              </Menu.Item>
+            </SubMenu>
+          ) : "" : ""}
           <Menu.Item key="/user_list">
             <Link to="/user_list">
               <Icon type="team" />

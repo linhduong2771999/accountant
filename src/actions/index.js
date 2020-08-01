@@ -1,13 +1,15 @@
-import * as authActions from "../modules/Login/actions/authActions";
+import * as AuthActions from "../modules/Login/actions/authActions";
 import * as UserManagerActions from "../modules/UserManager/actions/UserManagerAction";
 import * as UserListActions from "../modules/UserList/actions/UserListAction";
 import * as WorkManagerActions from "../modules/WorkManager/actions/WorkManagerAction";
+import * as UserDetailActions from "../modules/UserDetail/actions/UserDetailAction";
 
 import * as ModalPopupActions from "./modalPopupAction";
 export {
-    authActions,
+    AuthActions,
     UserManagerActions,
     ModalPopupActions,
     UserListActions,
-    WorkManagerActions
+    WorkManagerActions,
+    UserDetailActions
 }

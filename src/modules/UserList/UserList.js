@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from "react";
+import { Link } from "react-router-dom";
 import {connect} from "react-redux"
 import { bindActionCreators } from "redux";
 import { UserListActions } from "../../actions/index";
@@ -45,11 +46,10 @@ class UserList extends Component {
     const suggestionValue = userList;
     const actionsColumns = (id) => (
       <Row>
-        <Tooltip placement="top" title="Chi tiết">
-          <Button
-            icon="info-circle"
-            type="default"
-          ></Button>
+        <Tooltip  title="Chi tiết">
+            <Link className="text-decoration-none" to={`/user_detail/${id}`}>
+                <Button type="default" icon="info-circle" />
+            </Link>
         </Tooltip>
       </Row>
     );

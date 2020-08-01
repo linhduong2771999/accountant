@@ -6,8 +6,6 @@ const HIDE_MODAL = "HIDE_MODAL";
 export const openModal = createAction(OPEN_MODAL);
 export const hideModal = createAction(HIDE_MODAL);
 
-const ADD_MODAL = "ADD_MODAL";
-const EDIT_MODAL = "EDIT_MODAL";
+const IS_ADD_MODAL = "IS_ADD_MODAL";
 
-export const addModal = createAction(ADD_MODAL);
-export const editModal = createAction(EDIT_MODAL);
+export const isAddModal = createAction(IS_ADD_MODAL);

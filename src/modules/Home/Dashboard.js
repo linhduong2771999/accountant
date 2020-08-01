@@ -10,7 +10,7 @@ const simpleLineChartData = {
 };
 
 const simplePieChartData = {
-  series: [5, 3, 4]
+  series: [4, 2, 4]
 };
 var sum = function(a, b) {
   return a + b;
@@ -76,6 +76,7 @@ var responsiveOptions = [
 ];
 
 class Dashboard extends Component {
+  
   render() {
     return (
       <Fragment>
@@ -190,6 +191,7 @@ class Dashboard extends Component {
                     <div
                       id="chartPreferences"
                       className="ct-chart ct-perfect-fourth"
+                      style={{transform: "scale(1)"}}
                     >
                       <ChartistGraph
                         data={simplePieChartData}

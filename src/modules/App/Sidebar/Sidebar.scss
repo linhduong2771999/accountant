@@ -13,7 +13,6 @@
     margin-left: 10px;
     p {
       margin-bottom: 0;
-      font-size: 1.25em;
       letter-spacing: 1px;
       color: #2e97f8;
       &:hover{
@@ -40,3 +39,7 @@
 //   @include respond-to(medium-screens) { width: 125px; }
 //   @include respond-to(wide-screens) { float: none; }
 // }
+
+.ant-tooltip {
+  position: fixed;
+}

@@ -12,7 +12,7 @@ class Index extends Component {
           onChange={onChange}
           pagination={pagination}
           loading={loading}
-          rowKey="id"
+          rowKey="userUID"
         />
       </Fragment>
     );

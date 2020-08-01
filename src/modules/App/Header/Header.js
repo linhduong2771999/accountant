@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import Firebase from "../../../config/FirebaseClient";
+import React, { Component, Fragment } from "react";
+import {firebase} from "../../../config/FirebaseClient";
 import { PageHeader, Button } from "antd";
 import { Link, Redirect } from "react-router-dom";
 import Logo from "../../../assets/img/logo.jpg";
@@ -24,7 +24,8 @@ class Header extends Component {
       confirmButtonText: 'OK, đăng xuất!'
     }).then((result) => {
       if (result.value) {
-        Firebase.auth().signOut();
+        firebase.auth().signOut();
+        localStorage.removeItem("userUID");
         this.setState({
             user: true
         })
@@ -34,6 +35,8 @@ class Header extends Component {
 
   render() {
       if(this.state.user) return <Redirect to="/login" />
+      const userUID = localStorage.getItem("userUID");
+      
     return (
       <PageHeader
         style={{
@@ -51,9 +54,20 @@ class Header extends Component {
         }
         avatar={{ src: Logo }}
         extra={[
-          <Button key="1" type="primary" onClick={this.logout}>
-            Log out
-          </Button>
+          <Fragment key="1">
+            {JSON.parse(userUID) ? (
+              <Button  type="danger" onClick={this.logout}>
+                  Đăng xuất
+              </Button>
+            ) : (
+              <Button  type="primary" >
+                  <Link to="/login" style={{ color: "white" }}>
+                    Đăng nhập
+                  </Link>
+              </Button>
+            )}
+          </Fragment>
+
         ]}
       />
     );

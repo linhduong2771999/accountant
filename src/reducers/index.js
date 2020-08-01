@@ -4,6 +4,7 @@ import  authReducers from "../modules/Login/reducers/authReducers";
 import  userManagerReducer from "../modules/UserManager/reducers/UserManagerReducer";
 import  userListReducer from "../modules/UserList/reducers/UserListReducer";
 import  workManagerReducer from "../modules/WorkManager/reducers/WorkManagerReducer";
+import userDetailReducers from "../modules/UserDetail/reducers/UserDetailReducer";
 import modalPopupReducer from "./modalPopupReducer";
 // const reducers = [
    
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
     modalPopupReducer,
     userListReducer,
     workManagerReducer,
+    userDetailReducers,
     form: formReducer
 })
 export default rootReducer;

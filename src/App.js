@@ -5,10 +5,10 @@ import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import "react-datepicker/dist/react-datepicker.css";
 import AppIndex from "./modules/App/App";
 
-function App() {
+function App(props) {
   return (
     <div >
-        <AppIndex />
+        <AppIndex children={props.children} />
     </div>
   );
 }
