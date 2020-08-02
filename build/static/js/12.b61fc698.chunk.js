@@ -1,0 +1,2 @@
+(this.webpackJsonpaccountant=this.webpackJsonpaccountant||[]).push([[12],{811:function(t,e,n){"use strict";n.r(e);var a=n(44),c=n(45),u=n(47),r=n(46),o=n(48),i=n(0),l=n.n(i),s=function(t){function e(){return Object(a.a)(this,e),Object(u.a)(this,Object(r.a)(e).apply(this,arguments))}return Object(o.a)(e,t),Object(c.a)(e,[{key:"render",value:function(){return l.a.createElement(i.Fragment,null,l.a.createElement("button",null,"Click to get API."))}}]),e}(i.Component);e.default=s}}]);
+//# sourceMappingURL=12.b61fc698.chunk.js.map

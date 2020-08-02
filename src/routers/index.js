@@ -65,8 +65,7 @@ const RouterIndex = (
                     atActive={bounceTransition.atActive}
                     mapStyles={mapStyles}
                     className="switch-wrapper"
-                  >
-                      
+                  >   
                       <Route exact path={path.userDetail}  component={UserDetail} />
                       <Route exact path={path.notification} component={Notification} />
                       <ScrollToTopAndPrivateRoute exact path={path.workManager} component={WorkManager} />
