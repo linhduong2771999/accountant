@@ -6,13 +6,13 @@ class Index extends Component {
     return (
       <Fragment>
         <Table
-          scroll={{ x: 992 }}
+          scroll={{ x: 1300 }}
           columns={columns}
           dataSource={dataSource}
           onChange={onChange}
           pagination={pagination}
           loading={loading}
-          rowKey="userUID"
+          rowKey={record => record.id}
         />
       </Fragment>
     );

@@ -51,32 +51,45 @@ const bounceTransition = {
     scale: bounce(1),
   },
 };
+// const RouterIndex = (
+//   <BrowserRouter>
+//     <Switch>
+//         <Route exact path="/login" component={Login} />
+//         <App>
+//             <Suspense fallback={<div>Loading...</div>}>
+//             <Switch>
+//                 <Route exact path={path.home} component={Dashboard} />
+//                   <AnimatedSwitch
+//                     atEnter={bounceTransition.atEnter}
+//                     atLeave={bounceTransition.atLeave}
+//                     atActive={bounceTransition.atActive}
+//                     mapStyles={mapStyles}
+//                     className="switch-wrapper"
+//                   >   
+//                       <Route exact path={path.userDetail}  component={UserDetail} />
+//                       <Route exact path={path.notification} component={Notification} />
+//                       <ScrollToTopAndPrivateRoute exact path={path.workManager} component={WorkManager} />
+//                       <ScrollToTopAndPrivateRoute exact path={path.accounting} component={Accounting} />
+//                       <ScrollToTopAndPrivateRoute exact path={path.userManager} component={UserManager} />
+//                       <ScrollToTopAndPrivateRoute exact path={path.notificationManager} component={NotificationManager} />
+//                       <Route exact path="*" component={PageNotFound} />
+//                   </AnimatedSwitch>
+//                 </Switch>
+//             </Suspense>
+//         </App>
+//     </Switch>
+//   </BrowserRouter>
+// );
+
 const RouterIndex = (
   <BrowserRouter>
     <Switch>
-        <Route exact path="/login" component={Login} />
-        <App>
-            <Suspense fallback={<div>Loading...</div>}>
-            <Switch>
+          <App>
+              <Suspense fallback={<div>Loading...</div>}>
                 <Route exact path={path.home} component={Dashboard} />
-                  <AnimatedSwitch
-                    atEnter={bounceTransition.atEnter}
-                    atLeave={bounceTransition.atLeave}
-                    atActive={bounceTransition.atActive}
-                    mapStyles={mapStyles}
-                    className="switch-wrapper"
-                  >   
-                      <Route exact path={path.userDetail}  component={UserDetail} />
-                      <Route exact path={path.notification} component={Notification} />
-                      <ScrollToTopAndPrivateRoute exact path={path.workManager} component={WorkManager} />
-                      <ScrollToTopAndPrivateRoute exact path={path.accounting} component={Accounting} />
-                      <ScrollToTopAndPrivateRoute exact path={path.userManager} component={UserManager} />
-                      <ScrollToTopAndPrivateRoute exact path={path.notificationManager} component={NotificationManager} />
-                      <Route exact path="*" component={PageNotFound} />
-                  </AnimatedSwitch>
-                </Switch>
-            </Suspense>
-        </App>
+                <Route exact path={path.userManager} component={UserManager} />
+              </Suspense>
+          </App>
     </Switch>
   </BrowserRouter>
 );

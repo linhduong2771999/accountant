@@ -1,319 +1,203 @@
 import React, { Component, Fragment } from "react";
-import { Row, Col, Button, Tooltip, Tag } from "antd";
+import { Row, Col, Button, Dropdown, Menu, Icon, Select, Tag, Popover } from "antd";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { reduxForm } from "redux-form";
-import { UserManagerActions } from "../../actions/index";
-import { ModalPopupActions } from "../../actions/index";
-import { filterText } from "../../helpers/return";
+import { UserManagerActions, ModalPopupActions } from "../../actions/index";
+import { createLoadingSelector } from "../../helpers/loadingSelector";
 import * as Notifies from "../../components/Notifies/Notifies";
-import Table from "../../components/Table/Index";
 import UserManagerForm from "./UserManagerForm/UserManagerForm";
 import SearchControl from "../../components/SearchControl/SearchControl";
-import CSVDownload from "../../components/CSVDownload/CSVDownload";
-import UserImage from "../../assets/img/userImage.png";
+import MainTable from "./components/DataTable/MainTable";
+import ExtraTable from "./components/DataTable/ExtraTable";
+import LockFeatureModal from "./components/Modal/LockFeature_Modal";
+// import CSVDownload from "../../components/CSVDownload/CSVDownload";
 
 class UserManager extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      pagination: {},
+      userToEdit: {},
+      dropdownItemTitle: "Bảng chính"
     };
   }
   componentDidMount = () => {
-    this.props.actions.fetchUserManagerRequest();
+    this.handleGetUsers();
   };
 
-  onHandleTableChange = (pagination, filters, sorter, extra) => {
-    // console.log(sorter.field);
-    // console.log(filters, sorter)
-    // const pager = { ...this.state.pagination };
-    // pager.current = pagination.current;
-    // this.setState({
-    //   pagination: pager,
-    //   // extrassss: extra.currentDataSource
-    // });
-    this.fetchUser({
-      results: pagination.pageSize,
-      page: pagination.current,
-      sortField: sorter.field,
-      sortOrder: sorter.order,
-      extra: extra.currentDataSource,
-      ...filters,
-    });
-  };
+  handleGetUsers = async () => {
+    const body = {
+      page: 1,
+      limit: 5,
+      fallBack: (error) => Notifies.errorMessege(error.message, error.text, error.icon)
+    }
+    this.props.actions.getUser_from_UserManagerRequest(body);
+  }
 
-  fetchUser = (params = {}) => {
-    // const { extra } = params;
-    // var {userList} = this.props;
-    // console.log(params);
-    this.props.actions.fetchUserManagerRequest({ ...params });
-    // const pagination = { ...this.state.pagination };
-    // pagination.total = extra.length;
+  handleUpdateUser = async (id) => {
+    try{
+      const {usersList: {usersListTable}} = this.props.stateOfUserManager;
+      const temp = usersListTable.filter(item => item.id === id);
+      this.setState({
+        userToEdit: temp[0]
+      }, () => this.props.actions.openModal({popupName: "edit_user_form", popupProps: null}))
+    } catch(error) {
+      Notifies.errorMessege("Thao tác không thành công", "Vui lòng thử lại trong chốc lát!", "error")
+    }
+  }
 
-    // this.setState({
-    //   pagination
-    // });
-  };
+  handleDeleteUser = async (id, record) => {
+    try{
+      const {pagination, searchText } = this.props.stateOfUserManager;
+      const body = {
+        id,
+        page: pagination.currentPage,
+        limit: 5,
+        callBack: () => {
+          Notifies.deleteSuccess();
+          this.props.actions.getUser_from_UserManagerRequest({page: pagination.currentPage, limit: 5, search: searchText});
+        },
+        fallBack: (error) => Notifies.errorMessege(error.message, error.text, error.icon)
+      }
+      Notifies.deleteAction(() => this.props.actions.deleteUser_from_UserManagerRequest(body), record.name);
+    } catch(error) {
+      console.log(error);
+      Notifies.errorMessege("Thao tác không thành công", "Vui lòng thử lại trong chốc lát!", "error")
+    }
+  }
 
-  onHandleOpenModal = (type, userUID) => {
-    const {
-      openModal,
-      isAddModal,
-      getUserByIdUserManager,
-    } = this.props.actions;
-    openModal(true);
-    if (type === "add") {
-      isAddModal(true);
-      getUserByIdUserManager("");
-    } else {
-      isAddModal(false);
-      getUserByIdUserManager(userUID);
+  handleTableChange = (pagination, filters, sorter, extra) => {
+    try{
+      const { searchText } = this.props.stateOfUserManager;
+      const { current, pageSize } = pagination; // pagination from ant table
+      const { order, field } = sorter;
+      if (order === "ascend") {
+        this.props.actions.getUser_from_UserManagerRequest({page: current, limit: pageSize, search: searchText, sort: `${field}`, fields: ""});
+      } else if (order === "descend") {
+        this.props.actions.getUser_from_UserManagerRequest({page: current, limit: pageSize, search: searchText, sort: `-${field}`, fields: ""});
+      } else {
+        this.props.actions.getUser_from_UserManagerRequest({page: current, limit: pageSize, search: searchText, sort: "", fields: ""});
+      }
+    } catch(error){
+      Notifies.errorMessege("Thao tác không thành công", "Vui lòng thử lại trong chốc lát!", "error")
     }
   };
 
-  deleteUserAPI = () => {
-    const { oneUser } = this.props;
-    this.props.actions.deleteUserManagerRequest(oneUser);
-  };
+  handleSwitchTable = (index) => {
+    try {
+      const {pagination, searchText } = this.props.stateOfUserManager;
+      this.setState({
+        dropdownItemTitle: index
+      })
+      this.props.actions.getUser_from_UserManagerRequest({page: pagination.currentPage, limit: 5, search: searchText});
+    } catch(error) {
+      Notifies.errorMessege("Thao tác không thành công", "Vui lòng thử lại trong chốc lát!", "error")
+    }
+  }
 
-  onHandleOpenDeleteBox = (id) => {
-  //   admin.auth().deleteUser()
-  // .then(function() {
-  //   console.log('Successfully deleted user');
-  // })
-  // .catch(function(error) {
-  //   console.log('Error deleting user:', error);
-  // });
-    
-    // this.props.actions.fetchOneUserManagerRequest(id);
-    // Notifies.deleteSuccess(this.deleteUserAPI);
-  };
-
+  handleLockedAccount = (isLock, record) => {
+    this.props.actions.openModal({popupName: "lock_user_feature", popupProps: {isLock, record}});
+  }
+  
   render() {
-    var { searchText, userById } = this.props;
-    var { userList } = this.props.stateOfUserManagerReducer;
-    const suggestionValue = userList; 
-    const actionsColumns = (userUID) => (
-      <Row>
-        <Tooltip placement="top" title="Sửa">
-          <Button
-            style={{ marginRight: "1rem" }}
-            icon="edit"
-            type="default"
-            onClick={() => this.onHandleOpenModal("edit", userUID)}
-          ></Button>
-        </Tooltip>
-        <Tooltip placement="top" title="Xóa">
-          <Button
-            icon="delete"
-            type="danger"
-            onClick={() => this.onHandleOpenDeleteBox(userUID)}
-          ></Button>
-        </Tooltip>
-      </Row>
-    );
-
-    const columns = [
+    const {
+      pagination,
+      usersList: { usersListTable, usersListSuggestionForm },
+    } = this.props.stateOfUserManager;
+    const { isOpen, popupName, popupProps } = this.props.stateOfModalPopup;
+    const { loadingTable, loadingSuggestionForm } = this.props;
+    const menuData = [
       {
-        title: "Avatar",
-        dataIndex: "userInfo",
-        key: "avatarURL",
-        align: "center",
-        width: 100,
-        render: (userInfo) => {
-          return <img className="avatar-user-table" alt="..." src={userInfo.avatarURL ? userInfo.avatarURL : UserImage} />;
-        },
+        title: "Bảng chính"
       },
       {
-        title: "Tên",
-        dataIndex: "userInfo",
-        key: "name",
-        render: (userInfo) => {
-          return <span className="text-primary text-capitalize">{userInfo.name ? userInfo.name : "Chưa có"}</span>;
-        },
-        sorter: (a, b) => {
-            return a. userInfo.name.toLowerCase().localeCompare(b.userInfo.name.toLowerCase());
-        },
-      },
-      {
-        title: "Email",
-        dataIndex: "userInfo.email",
-        key: "email",
-        width: 250, 
-        sorter: (a, b) => {
-          if(a.userInfo.email && b.userInfo.email)
-          return a.userInfo.email.toLowerCase().localeCompare(b.userInfo.email.toLowerCase());
-        },
-      },
-      {
-        title: "Vị trí",
-        dataIndex: "userInfo",
-        key: "position",
-        render: (userInfo) => {
-          return (
-              userInfo.position ? 
-                <span className="text-capitalize">{userInfo.position}</span>
-              : <span className="text-warning">Chưa có</span>
-            
-          );
-        },
-        sorter: (a, b) => {
-          if(a.userInfo.position && b.userInfo.position) 
-          return a.userInfo.position.toLowerCase().localeCompare(b.userInfo.position.toLowerCase());
-        },
-      },
-      {
-        title: "Chuyên môn",
-        dataIndex: "userInfo",
-        key: "major",
-        render: (userInfo) => {
-          return (
-                userInfo.major ? 
-                <span className="text-capitalize">{userInfo.major}</span>
-              : <span className="text-warning">Chưa có</span>
-          )
-        },
-        sorter: (a, b) => {
-          if(a.userInfo.major && b.userInfo.major)
-          return a.userInfo.major.toLowerCase().localeCompare(b.userInfo.major.toLowerCase());
-        },
-      },
-      {
-        title: "Số dt",
-        dataIndex: "userInfo",
-        key: "phone",
-        render: (userInfo) => {
-            return userInfo.phone ?
-                    <span className="text-capitalize">{userInfo.phone}</span>
-                  : <span className="text-warning">Chưa có</span>
-        },
-        sorter: (a, b) => {
-          if(a.userInfo.phone && b.userInfo.phone)
-          return a.userInfo.phone - b.userInfo.phone;
-        },
-      },
-      {
-        title: "Vai trò",
-        dataIndex: "userRole",
-        key: "role",  
-        render: (userRole) => {
-          return (
-              userRole.role === "admin" ? 
-                <span className="text-capitalize">Quản trị viên</span>
-              : <span className="text-capitalize">Người dùng</span>
-          )
-        },
-        // sorter: (a, b) => {
-        //   if(a.userInfo.level && a.userInfo.level)
-        //   return a.userInfo.level.toLowerCase().localeCompare(b.userInfo.level.toLowerCase());
-        // },
-      },
-      {
-        title: "Tình trạng",
-        dataIndex: "userInfo",
-        key: "status",  
-        render: (userInfo) => {
-          return (
-                  userInfo.status ? 
-                <Tag color="lime" className="text-capitalize">Đang Hoạt động</Tag>
-              : <Tag color="cyan" className="text-warning">Tạm nghỉ</Tag>
-          )
-        },
-        // sorter: (a, b) => {
-        //   if(a.userInfo.level && a.userInfo.level)
-        //   return a.userInfo.level.toLowerCase().localeCompare(b.userInfo.level.toLowerCase());
-        // },
-      },
-      {
-        title: "Tác vụ",
-        dataIndex: "userUID",
-        render: (userUID) => {
-          return (
-            actionsColumns(userUID)
-          );
-        },
-      },
+        title: "Bảng chi tiết"
+      }
     ];
-
-    if (searchText) {
-      userList = userList.filter((item) => {
-        const data =
-          filterText(item.name)
-            .toLowerCase()
-            .trim()
-            // .replace(/\s+/g, "")
-            .includes(searchText.toLowerCase()) ||
-          filterText(item.email)
-            .toLowerCase()
-            .trim()
-            .replace(/\s+/g, "")
-            .includes(searchText.toLowerCase()) ||
-          filterText(item.position)
-            .toLowerCase()
-            .trim()
-            // .replace(/\s+/g, "")
-            .includes(searchText.toLowerCase()) ||
-          filterText(item.level)
-            .toLowerCase()
-            .trim()
-            .includes(searchText.toLowerCase()) ||
-          filterText(item.major)
-            .toLowerCase()
-            .trim()
-            .includes(searchText.toLowerCase()) ||
-          filterText(item.phone)
-            .toLowerCase()
-            .trim()
-            .replace(/\s+/g, "")
-            .includes(searchText.toLowerCase());
-        return data;
-      });
-    }
+    const menu = (
+      <Menu>
+        {menuData.map((item, index) => (
+          <Menu.Item key={index}>
+            <span onClick={() => this.handleSwitchTable(item.title)}>{item.title}</span>
+          </Menu.Item>
+          ))}
+      </Menu>
+    );
     return (
       <Fragment>
         <Row gutter={[0, { xs: 32, sm: 32, md: 32, xl: 32 }]}>
           <Col xs={24} sm={24} md={16} lg={8} xl={10}>
-            <SearchControl 
-              searchUser={this.props.actions.searchUserManager} 
-              suggestionValue={suggestionValue}
+            <SearchControl
+              limit={5}
+              currentPage={pagination.currentPage}
+              loading={loadingSuggestionForm}
+              suggestionValue={usersListSuggestionForm}
+              search_from_UserManagerRequest={this.props.actions.search_from_UserManagerRequest}
+              getUser_from_UserManagerRequest={this.props.actions.getUser_from_UserManagerRequest}
             />
           </Col>
           <Col xs={24} sm={24} md={16} lg={8} xl={14}>
             <Row type="flex" justify="end">
-              {/*<Button
-                className="user-manager_button"
-                icon="user"
-                type="primary"
-                onClick={() => this.onHandleOpenModal("add")}
-              >
-                Thêm mới
-              </Button>*/}
-              <CSVDownload userList={userList} />
+            <Dropdown overlay={menu} trigger={['click']}>
+              <Button  type="primary">{this.state.dropdownItemTitle} <Icon type="menu-fold" /></Button>
+            </Dropdown>
+              {
+                /*
+                <CSVDownload userList={userList} />
+               */
+              }
             </Row>
           </Col>
         </Row>
-        <Table
-          style={{height: "800px"}}
-          columns={columns}
-          dataSource={userList}
-          onChange={this.onHandleTableChange}
-          loading={this.props.isLoading}
-          pagination={{ total: userList.length }}
+        {this.state.dropdownItemTitle === "Bảng chính" 
+          ? 
+            <MainTable 
+              usersListTable={usersListTable}
+              loadingTable={ loadingTable }
+              pagination={pagination}
+              handleTableChange={this.handleTableChange}
+              handleUpdateUser={this.handleUpdateUser}
+              handleDeleteUser={this.handleDeleteUser}
+              handleLockedAccount={this.handleLockedAccount}
+              history={this.props.history}
+            />
+          :
+          <ExtraTable 
+            usersListTable={usersListTable}
+            loadingTable={ loadingTable }
+            pagination={pagination}
+            handleTableChange={this.handleTableChange}
+            handleDeleteUser={this.handleDeleteUser}
+            handleLockedUser={this.handleLockedUser}
+          />
+      }
+        <LockFeatureModal  
+          isOpen={isOpen} 
+          popupName={popupName} 
+          popupProps={popupProps}
+          hideModal={this.props.actions.hideModal}
+          handlelockedAccount_from_UserManagerRequest={this.props.actions.handlelockedAccount_from_UserManagerRequest}
         />
-        <UserManagerForm userById={userById} />
+        <UserManagerForm 
+          isOpen={isOpen} 
+          popupName={popupName} 
+          popupProps={popupProps}
+          hideModal={this.props.actions.hideModal}
+          userToEdit={this.state.userToEdit}
+          updateUser_from_UserManagerRequest={this.props.actions.updateUser_from_UserManagerRequest}
+        />
       </Fragment>
     );
   }
 }
 
+
+
 const mapStateToProps = (state) => {
   return {
-    isLoading: state.userManagerReducer.isLoading,
-    searchText: state.userManagerReducer.searchText,
-    userById: state.userManagerReducer.userById,
-    sortArray: state.userManagerReducer.sortArray,
-    stateOfUserManagerReducer: state.userManagerReducer
+    stateOfUserManager: state.userManagerReducer,
+    stateOfModalPopup: state.modalPopupReducer,
+    loadingTable: createLoadingSelector(['GET_USER_FROM_USER_MANAGER', 'UPDATE_USER_FROM_USER_MANAGER'])(state),
+    loadingSuggestionForm: createLoadingSelector(['SEARCH_FROM_USER_MANAGER'])(state)
   };
 };
 
@@ -329,8 +213,4 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(
-  reduxForm({
-    form: "simple",
-  })(UserManager)
-);
+)(UserManager);

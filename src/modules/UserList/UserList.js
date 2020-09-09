@@ -141,7 +141,7 @@ class UserList extends Component {
           filterText(item.email)
             .toLowerCase()
             .trim()
-            .replace(/\s+/g, "")
+            .replace(/\s+/g, "") // Regex get rid of space between words
             .includes(this.props.searchText.toLowerCase()) ||
           filterText(item.position)
             .toLowerCase()

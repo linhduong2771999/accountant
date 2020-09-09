@@ -1,9 +1,11 @@
 import Swal from "sweetalert2";
 import * as Color from "../../assets/styles/Colors";
-export const errorMessege = () => {
+
+export const errorMessege = (title, text, icon) => {
     Swal.fire({
-        title: "Có gì đó không ổn ?",
-        text: "Vui lòng đợi trong giây lát ?",
+        title: title,
+        text: text,
+        icon,
         confirmButtonColor: Color.primaryColor
       });
 } 
@@ -38,9 +40,19 @@ export const updateSuccess = () => {
   })
 }
 
-export const deleteSuccess = (callback) => {
+export const deleteSuccess = () => {
   Swal.fire({
-    title: 'Bạn có chắc chắn xóa?',
+    position: 'center',
+    icon: 'success',
+    title: 'Xóa thành công',
+    showConfirmButton: false,
+    timer: 1500
+  })
+}
+
+export const deleteAction = (callback, name) => {
+  Swal.fire({
+    title: `Xóa ${name}?`,
     text: "Không thể khôi phục lại khi xóa",
     icon: 'warning',
     showCancelButton: true,
@@ -53,10 +65,8 @@ export const deleteSuccess = (callback) => {
       if(callback){
         callback();
       }
-      Swal.fire(
-        'Xóa thành công',
-        'Success'
-      )
     }
+  }).catch(error => {
+    console.log(error);
   })
 }

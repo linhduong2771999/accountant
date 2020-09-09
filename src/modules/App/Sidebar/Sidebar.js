@@ -59,7 +59,26 @@ class Sidebar extends Component {
     const { collapsed, isOpenTooltip } = this.state;
     const {location} = this.props;
     const { userInfo, userRole } = this.props.userProfile;
-    
+  //   <div
+  //   className="logo-user"
+  //   style={{ justifyContent: collapsed ? "center" : "" }}
+  // >
+  //   <Avatar icon="user" size="large" />
+  //   {collapsed ? (
+  //     ""
+  //   ) : (
+  //     <div className="user-name">
+  //       <span>Welcome,</span>
+  //       <Tooltip style={{position: "fixed", zIndex: "10"}} onVisibleChange={this.onVisibleChange} visible={isOpenTooltip} placement="right" title={settingIcon}>
+  //         <p className="font-size-14 d-flex align-items-center">
+  //           Chào 
+  //           {userInfo ? <span className="text-overflow-custom ml-1"> {userInfo.name}</span> : "..."} 
+  //           <Icon type="right" style={{ fontSize: "10px", marginLeft: ".25rem" }} />
+  //         </p>
+  //       </Tooltip>
+  //     </div>
+  //   )}  
+  // </div>
     return (
       <Sider
         style={{
@@ -73,26 +92,26 @@ class Sidebar extends Component {
         breakpoint={"md"}
         onCollapse={this.onCollapse}
       >
-        <div
-          className="logo-user"
-          style={{ justifyContent: collapsed ? "center" : "" }}
-        >
-          <Avatar icon="user" size="large" />
-          {collapsed ? (
-            ""
-          ) : (
-            <div className="user-name">
-              <span>Welcome,</span>
+      {collapsed ? (
+        ""
+      ) : (
+        <div className="user-intro">
+          <div className="user-intro_logo">
+            <Avatar icon="user" size="large" />
+          </div>
+          <div className="user-intro_info">
+              <div className="user-intro_info_welcome">
+                  <span>Welcome,</span>
+              </div>
               <Tooltip style={{position: "fixed", zIndex: "10"}} onVisibleChange={this.onVisibleChange} visible={isOpenTooltip} placement="right" title={settingIcon}>
-                <p className="font-size-14 d-flex align-items-center">
-                  Chào 
-                  {userInfo ? <span className="text-overflow-custom ml-1"> {userInfo.name}</span> : "..."} 
-                  <Icon type="right" style={{ fontSize: "10px", marginLeft: ".25rem" }} />
-                </p>
+                <div className="user-intro_info_name">
+                    <span>Chào Dương</span>
+                    <Icon type="right" style={{ fontSize: "10px", marginLeft: ".25rem" }} />
+                </div>
               </Tooltip>
-            </div>
-          )}  
+          </div>
         </div>
+      )}
         <Menu
           theme="dark"
           mode="inline"
@@ -115,7 +134,6 @@ class Sidebar extends Component {
               <span>Bảng điều khiển  </span>
             </Link>
           </Menu.Item>
-          {userRole ? userRole.role === "admin" ? (
             <SubMenu
               key="sub1"
               title={
@@ -138,7 +156,6 @@ class Sidebar extends Component {
                 <Link to="/notification_manager">Quản lý thông báo</Link>
               </Menu.Item>
             </SubMenu>
-          ) : "" : ""}
           <Menu.Item key="/user_list">
             <Link to="/user_list">
               <Icon type="team" />

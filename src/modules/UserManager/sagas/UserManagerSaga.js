@@ -1,84 +1,108 @@
-import {call, put, takeEvery} from "redux-saga/effects";
+import {call, put, takeEvery, delay, takeLatest} from "redux-saga/effects";
 import { UserManagerActions } from "../../../actions/index";
 import * as UserManagerAPI from "../api/UserManagerAPI";
+// import {  } from "lodash";
 
-function* handleFetchUserManagerRequest(action){
+function* handle_GetUser_from_UserManagerRequest(action){
+    const {page, limit , search, sort, fields, fallBack} = action.payload || {};
     try{
-        const {data, statusText} = yield call(UserManagerAPI.getUserManager);
-        // console.log(data)
+        yield delay(500)
+        const {data, statusText} = yield call(UserManagerAPI.getUser_from_UserManager, {page,limit, search, sort, fields });
         if(statusText === "OK"){
-            yield put(UserManagerActions.fetchUserManagerSuccess(data));
-        }
-
-    }
-    catch (error){
-        yield put(UserManagerActions.fetchUserManagerError(error));
-    }
-}
-
-function* handleCreateUserManagerRequest(action){
-    const {userInfo, callback, fallback} = action.payload;
-    try{
-        const {statusText} = yield call(UserManagerAPI.createUserManager, userInfo );
-        if(statusText === "OK"){
-            yield put(UserManagerActions.createUserManagerSuccess(userInfo));
-            yield callback && callback();
-        }
-
-    }
-    catch (error){
-        yield put(UserManagerActions.createUserManagerError(error));
-        yield fallback && fallback();
-    }
-}
-
-function* handleUpdateUserManagerRequest(action){
-    const {userInfo, userRole, userUID,  callback, fallback} = action.payload;
-    try{
-        const {data, statusText} = yield call(UserManagerAPI.updateUserManager, {userRole, userInfo, userUID} );     
-        if(statusText === "OK"){
-            yield put(UserManagerActions.updateUserManagerSuccess(data));
-            yield callback && callback();
+            yield put(UserManagerActions.getUser_from_UserManagerSuccess({data, searchText: search}));
         }
     }
     catch (error){
-        yield put(UserManagerActions.updateUserManagerError(error));
-        yield fallback && fallback();
+        yield put(UserManagerActions.getUser_from_UserManagerError(error));
+        fallBack && fallBack(error);
     }
 }
 
-function* handleDeleteUserManagerRequest(action){
-    const  userInfo  = action.payload;    
+function* handle_Search_from_UserManagerRequest(action){
+    const {page, limit, search, sort, fields, fallBack} = action.payload || {};
     try{
-        const {statusText} = yield call(UserManagerAPI.deleteUserManager, userInfo);     
-        if(statusText === "OK"){
-            yield put(UserManagerActions.deleteUserManagerSuccess(userInfo));
+        yield delay(700);
+        const {data, statusText} = yield call(UserManagerAPI.getUser_from_UserManager, {page, limit, search, sort, fields });
+        if(statusText === "OK"){ 
+            yield put(UserManagerActions.search_from_UserManagerSuccess({data})); // For suggestion form
+          
+        }
+    } catch(error){
+        yield put(UserManagerActions.search_from_UserManagerError(error));
+    }
+
+}
+
+function* handle_Update_from_UserManagerRequest(action){
+    const {user,  callBack, fallBack} = action.payload;
+    try{
+        const {data, statusText} = yield call(UserManagerAPI.updateUser_from_UserManager, user)
+        if(statusText === "OK") {
+            yield put(UserManagerActions.updateUser_from_UserManagerSuccess(data));
+            callBack && callBack();
         }
     }
     catch (error){
-        yield put(UserManagerActions.updateUserManagerError(error));
+        yield put(UserManagerActions.updateUser_from_UserManagerError(error));
+        yield fallBack && fallBack();
     }
 }
 
-function* fetchUserManagerRequest() {
-    yield takeEvery(UserManagerActions.fetchUserManagerRequest, handleFetchUserManagerRequest);
+function* handle_DeleteUser_from_UserManagerRequest(action){
+    const  {id, page, limit, callBack, fallBack}  = action.payload;    
+    try{
+        const {data, statusText} = yield call(UserManagerAPI.deleteUser_from_UserManager, {id, page, limit}); // id   
+        if(statusText === "OK"){
+            yield put(UserManagerActions.deleteUser_from_UserManagerSuccess({data, id}));
+            callBack && callBack();
+        }
+    }
+    catch (error){
+        yield put(UserManagerActions.deleteUser_from_UserManagerError(error));
+        fallBack && fallBack(error);
+    }
 }
 
-function* createUserManagerRequest() {
-    yield takeEvery(UserManagerActions.createUserManagerRequest, handleCreateUserManagerRequest);
+function* handle_LockedAccount_from_UserManagerRequest(action)  {
+    const {id, email, accountLockedUntil, active, isLock, callBack, fallBack} = action.payload;
+    try{
+        if(isLock === "lock"){
+            yield call(UserManagerAPI.lockAccount_from_UserManager, {email, accountLockedUntil, active})
+        } else {
+            yield call(UserManagerAPI.unlockAccount_from_UserManager, {email, accountLockedUntil, active})
+        }
+        yield put(UserManagerActions.handlelockedAccount_from_UserManagerSuccess({id, active}));
+        callBack && callBack();
+    } catch(error) {
+        yield put(UserManagerActions.handlelockedAccount_from_UserManagerError(error));
+        fallBack && fallBack(error);
+    }
 }
 
-function* updateUserManagerRequest() {
-    yield takeEvery(UserManagerActions.updateUserManagerRequest, handleUpdateUserManagerRequest);
+function* getUser_from_UserManagerRequest() {
+    yield takeEvery(UserManagerActions.getUser_from_UserManagerRequest, handle_GetUser_from_UserManagerRequest);
 }
 
-function* deleteUserManagerRequest() {
-    yield takeEvery(UserManagerActions.deleteUserManagerRequest, handleDeleteUserManagerRequest);
+function* search_from_UserManagerRequest() {
+    yield takeLatest(UserManagerActions.search_from_UserManagerRequest, handle_Search_from_UserManagerRequest);
+}
+
+function* updateUser_from_UserManagerRequest() {
+    yield takeEvery(UserManagerActions.updateUser_from_UserManagerRequest, handle_Update_from_UserManagerRequest);
+}
+
+function* deleteUser_from_UserManagerRequest() {
+    yield takeEvery(UserManagerActions.deleteUser_from_UserManagerRequest, handle_DeleteUser_from_UserManagerRequest);
+}
+
+function* handlelockedAccount_from_UserManagerRequest() {
+    yield takeEvery(UserManagerActions.handlelockedAccount_from_UserManagerRequest, handle_LockedAccount_from_UserManagerRequest);
 }
 
 export default {
-    fetchUserManagerRequest,
-    createUserManagerRequest,
-    updateUserManagerRequest,
-    deleteUserManagerRequest
+    getUser_from_UserManagerRequest,
+    search_from_UserManagerRequest,
+    updateUser_from_UserManagerRequest,
+    deleteUser_from_UserManagerRequest,
+    handlelockedAccount_from_UserManagerRequest
 }

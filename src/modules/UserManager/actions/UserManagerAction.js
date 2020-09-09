@@ -1,45 +1,42 @@
 import {createAction} from "redux-actions";
 
-const FETCH_USER_MANAGER_REQUEST = "FETCH_USER_MANAGER_REQUEST";
-const FETCH_USER_MANAGER_SUCCESS = "FETCH_USER_MANAGER_SUCCESS";
-const FETCH_USER_MANAGER_ERROR = "FETCH_USER_MANAGER_ERROR";
+const GET_USER_FROM_USER_MANAGER_REQUEST = "GET_USER_FROM_USER_MANAGER_REQUEST";
+const GET_USER_FROM_USER_MANAGER_SUCCESS = "GET_USER_FROM_USER_MANAGER_SUCCESS";
+const GET_USER_FROM_USER_MANAGER_ERROR = "GET_USER_FROM_USER_MANAGER_ERROR";
 
-export const fetchUserManagerRequest = createAction(FETCH_USER_MANAGER_REQUEST);
-export const fetchUserManagerSuccess = createAction(FETCH_USER_MANAGER_SUCCESS);
-export const fetchUserManagerError = createAction(FETCH_USER_MANAGER_ERROR);
+export const getUser_from_UserManagerRequest = createAction(GET_USER_FROM_USER_MANAGER_REQUEST);
+export const getUser_from_UserManagerSuccess = createAction(GET_USER_FROM_USER_MANAGER_SUCCESS);
+export const getUser_from_UserManagerError = createAction(GET_USER_FROM_USER_MANAGER_ERROR);
 
-const CREATE_USER_MANAGER_REQUEST = "CREATE_USER_MANAGER_REQUEST";
-const CREATE_USER_MANAGER_SUCCESS = "CREATE_USER_MANAGER_SUCCESS";
-const CREATE_USER_MANAGER_ERROR = "CREATE_USER_MANAGER_ERROR";
+const UPDATE_USER_FROM_USER_MANAGER_REQUEST = "UPDATE_USER_FROM_USER_MANAGER_REQUEST";
+const UPDATE_USER_FROM_USER_MANAGER_SUCCESS = "UPDATE_USER_FROM_USER_MANAGER_SUCCESS";
+const UPDATE_USER_FROM_USER_MANAGER_ERROR = "UPDATE_USER_FROM_USER_MANAGER_ERROR";
 
-export const createUserManagerRequest = createAction(CREATE_USER_MANAGER_REQUEST);
-export const createUserManagerSuccess = createAction(CREATE_USER_MANAGER_SUCCESS);
-export const createUserManagerError = createAction(CREATE_USER_MANAGER_ERROR);
+export const updateUser_from_UserManagerRequest = createAction(UPDATE_USER_FROM_USER_MANAGER_REQUEST);
+export const updateUser_from_UserManagerSuccess = createAction(UPDATE_USER_FROM_USER_MANAGER_SUCCESS);
+export const updateUser_from_UserManagerError = createAction(UPDATE_USER_FROM_USER_MANAGER_ERROR);
 
-const UPDATE_USER_MANAGER_REQUEST = "UPDATE_USER_MANAGER_REQUEST";
-const UPDATE_USER_MANAGER_SUCCESS = "UPDATE_USER_MANAGER_SUCCESS";
-const UPDATE_USER_MANAGER_ERROR = "UPDATE_USER_MANAGER_ERROR";
+const DELETE_USER_USER_MANAGER_REQUEST = "DELETE_USER_USER_MANAGER_REQUEST";
+const DELETE_USER_USER_MANAGER_SUCCESS = "DELETE_USER_USER_MANAGER_SUCCESS";
+const DELETE_USER_USER_MANAGER_ERROR = "DELETE_USER_USER_MANAGER_ERROR";
 
-export const updateUserManagerRequest = createAction(UPDATE_USER_MANAGER_REQUEST);
-export const updateUserManagerSuccess = createAction(UPDATE_USER_MANAGER_SUCCESS);
-export const updateUserManagerError = createAction(UPDATE_USER_MANAGER_ERROR);
+export const deleteUser_from_UserManagerRequest = createAction(DELETE_USER_USER_MANAGER_REQUEST);
+export const deleteUser_from_UserManagerSuccess = createAction(DELETE_USER_USER_MANAGER_SUCCESS);
+export const deleteUser_from_UserManagerError = createAction(DELETE_USER_USER_MANAGER_ERROR);
 
-const DELETE_USER_MANAGER_REQUEST = "DELETE_USER_MANAGER_REQUEST";
-const DELETE_USER_MANAGER_SUCCESS = "DELETE_USER_MANAGER_SUCCESS";
-const DELETE_USER_MANAGER_ERROR = "DELETE_USER_MANAGER_ERROR";
+const SEARCH_FROM_USER_MANAGER_REQUEST = "SEARCH_FROM_USER_MANAGER_REQUEST";
+const SEARCH_FROM_USER_MANAGER_SUCCESS = "SEARCH_FROM_USER_MANAGER_SUCCESS";
+const SEARCH_FROM_USER_MANAGER_ERROR = "SEARCH_FROM_USER_MANAGER_ERROR";
 
-export const deleteUserManagerRequest = createAction(DELETE_USER_MANAGER_REQUEST);
-export const deleteUserManagerSuccess = createAction(DELETE_USER_MANAGER_SUCCESS);
-export const deleteUserManagerError = createAction(DELETE_USER_MANAGER_ERROR);
+export const search_from_UserManagerRequest = createAction(SEARCH_FROM_USER_MANAGER_REQUEST);
+export const search_from_UserManagerSuccess = createAction(SEARCH_FROM_USER_MANAGER_SUCCESS);
+export const search_from_UserManagerError = createAction(SEARCH_FROM_USER_MANAGER_ERROR);
 
-const SEARCH_USER_MANAGER = "SEARCH_USER_MANAGER";
 
-export const searchUserManager = createAction(SEARCH_USER_MANAGER);
+const HANDLE_LOCKED_ACCOUNT_FROM_USER_MANAGER_REQUEST = "HANDLE_LOCKED_ACCOUNT_FROM_USER_MANAGER_REQUEST";
+const HANDLE_LOCKED_ACCOUNT_FROM_USER_MANAGER_SUCCESS = "HANDLE_LOCKED_ACCOUNT_FROM_USER_MANAGER_SUCCESS";
+const HANDLE_LOCKED_ACCOUNT_FROM_USER_MANAGER_ERROR = "HANDLE_LOCKED_ACCOUNT_FROM_USER_MANAGER_ERROR";
 
-const GET_USER_BY_ID_USER_MANAGER = "GET_USER_BY_ID_USER_MANAGER";
-
-export const getUserByIdUserManager = createAction(GET_USER_BY_ID_USER_MANAGER);
-
-const SORT_USER_MANAGER = "SORT_USER_MANAGER";
-
-export const sortUserManager = createAction(SORT_USER_MANAGER);
+export const handlelockedAccount_from_UserManagerRequest = createAction(HANDLE_LOCKED_ACCOUNT_FROM_USER_MANAGER_REQUEST)
+export const handlelockedAccount_from_UserManagerSuccess = createAction(HANDLE_LOCKED_ACCOUNT_FROM_USER_MANAGER_SUCCESS);
+export const handlelockedAccount_from_UserManagerError = createAction(HANDLE_LOCKED_ACCOUNT_FROM_USER_MANAGER_ERROR);

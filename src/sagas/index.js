@@ -7,11 +7,11 @@ import UserListSaga from "../modules/UserList/sagas/UserListSaga";
 import WorkManagerSaga from "../modules/WorkManager/sagas/WorkManagerSaga";
 import UserDetail from "../modules/UserDetail/sagas/UserDetailSaga";
 const sagaList = [
-    AuthSaga,
+    // AuthSaga,
     UserManagerSaga,
-    UserListSaga,
-    WorkManagerSaga,
-    UserDetail
+    // UserListSaga,
+    // WorkManagerSaga,
+    // UserDetail
 ]
 
 export default function* () {
