@@ -1,96 +1,197 @@
 import React, { Component, Fragment } from "react";
-import { Field, reduxForm } from "redux-form";
-import { connect } from "react-redux";
-import { Modal, Button, Spin, Select , Input } from "antd";
-import { bindActionCreators } from "redux";
-import { ModalPopupActions } from "../../../actions/index";
-import { UserManagerActions } from "../../../actions/index";
+import { Modal, Button, Popover, Select , Input } from "antd";
+import { validateName, validatePhoneNumber } from "../../../helpers/Validate";
 import * as Notifies from "../../../components/Notifies/Notifies";
-import { validate } from "../../../helpers/Validate";
-
+import BeautyStars from 'beauty-stars';
 const { Option } = Select; 
 
-const renderField = ({
-  input,
-  type,
-  className,
-  autoComplete,
-  placeholder,
-  meta: { touched, error, warning },
-}) => (
-  <Fragment>
-    <Input className={className} placeholder={placeholder} autoComplete={autoComplete} {...input} type={type} />
-    {touched &&
-      ((error && <span className="text-validate">{error}</span>) ||
-        (warning && <span className="text-validate">{warning}</span>))}
-  </Fragment>
-);
 
-const renderSelectField = ({
-  input,
-  className,
-  onChange,
-  meta: { touched, error },
-  children,
-}) => (
-  <Fragment>
-    <Select getPopupContainer={trigger => trigger.parentNode} onChange={onChange} className={className} {...input}>
-      {children}
-    </Select>
-    {touched && error && <span className="text-validate">{error}</span>}
-  </Fragment>
-);
-
-const changeOptions = [
+const selectOptions = [
   {
-    OptionType: "Quản lý",
-    OptionValue: ["Quản lý dự án", "Quản lý nhân sự", "Quản lý tài chính"]
+    key: "Quản lý",
+    value: ["Quản lý dự án", "Quản lý nhân sự", "Quản lý tài chính"]
   },
   {
-    OptionType: "IT",
-    OptionValue: ["Frontend (Web)", "Backend (Web)", "Thiết kế đồ họa", "An ninh mạng", "Kỹ sư cơ sở dữ liệu", "Hỗ trợ máy tính"]
+    key: "IT",
+    value: ["Frontend (Web)", "Backend (Web)", "Thiết kế đồ họa", "An ninh mạng", "Kỹ sư cơ sở dữ liệu", "Hỗ trợ máy tính"]
   },
   {
-    OptionType: "Tài chính",
-    OptionValue: ["Kế toán", "Marketing"]
+    key: "Tài chính",
+    value: ["Kế toán", "Marketing"]
   },
 ]
-class UserManagerForm extends Component {
+export default class UserManagerForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // selectedImg: null,
-      // imgInfo: null,
-      // progress: 0,
-      // isProgress: false,
-      major: "",
-      userUID: "", // dùng trong giai đoạn khởi tạo
-      selectOptionType: "",
-      validateMajor: false
+      user: {
+        name: "",
+        position: "",
+        department: "",
+        level: "",
+        role: "",
+        phone: "",
+        rating: 1
+      },
+      error: {
+        name: "",
+        phone: ""
+      },
+
     };
+    this.isModified = false;
+  }
+  
+  componentDidUpdate = (prevProps, prevState) => {
+    const { user } = this.state;
+    if(prevState.user.position !== user.position){ // reset department each time we change position
+      let firstValue = {};
+      selectOptions.forEach((ele) => {
+        if(user.position === ele.key){
+          firstValue = ele.value[0]; // get the first value 
+        }
+      })
+      this.setState({
+        user: {
+          ...user,
+          department: firstValue
+        }
+      })
+    }
   }
 
-  static getDerivedStateFromProps = (nextProps, prevState) => {
-    if(nextProps.userById && nextProps.userById.userUID !== prevState.userUID){
-      return {
-        userUID: nextProps.userById.userUID,
-        selectOptionType: nextProps.userById.userInfo.position,
-        major: nextProps.userById.userInfo.major
+  UNSAFE_componentWillReceiveProps = (nextProps) => {
+    if(nextProps && nextProps.userToEdit) {
+      this.setState({
+				user: {
+          name: nextProps.userToEdit.name,
+          position: nextProps.userToEdit.position,
+          department: nextProps.userToEdit.department,
+          level: nextProps.userToEdit.level,
+          role: nextProps.userToEdit.role,
+          phone: nextProps.userToEdit.phone,
+          rating: nextProps.userToEdit.rating || 1
+        }
+      });
+    }
+  }
+
+  handleOnChangeInput = (e) => {
+    const {value, name} = e.target; 
+    this.isModified = true;
+    this.setState({
+      user: {
+        ...this.state.user,
+        [name]: value
       }
+    }, () => this.handleValidationOnChange(name, this.state.user))
+  }
+
+  handleOnChangeSelect = (name, value) => {
+    this.isModified = true;
+    this.setState({ 
+      user: {
+        ...this.state.user,
+        [name]: value
+      }
+    });
+  }
+
+  handleSubmit = (e) => {
+    e.preventDefault();
+    try{
+      const { name, position, department, level, role, phone, rating } = this.state.user;
+      const error = this.handleValidation(this.state.user);
+      const body = {
+        user: {
+          id: this.props.userToEdit.id,
+          name,
+          phone,
+          position,
+          department,
+          level,
+          role,
+          rating 
+        },
+        callBack: () => Notifies.updateSuccess(),
+        fallBack: (error) => Notifies.errorMessege(error.message, error.text, error.icon)
+      }
+
+      if(error.name || error.phone) {
+        this.setState({
+          error
+        })
+      } else if(!this.isModified) {
+        alert("Bạn chưa sửa gì cả!")
+      } else {
+        this.props.updateUser_from_UserManagerRequest(body)
+        this.props.hideModal();
+      }
+
+    } catch (error){
+      Notifies.errorMessege("Thao tác không thành công", "Vui lòng thử lại trong chốc lát!", "error");
+    }
+  }
+
+  handleValidation = (user = {}) => {
+    let error = {...this.state.error};
+
+    error.name = !validateName(user.name) && "Tên phải dài hơn 5 ký tự và không có số";
+    error.phone = !validatePhoneNumber(user.phone) && "Số điện thoại không hợp lệ";
+
+    return error
+  }
+
+  handleValidationOnChange = (field, user) => {   
+    let error = {...this.state.error};
+    this.isModified = true;
+    switch (field) {
+      case "name":
+        let {name} = this.handleValidation(user);
+        error.name = name;
+        break;
+      case "phone":
+        let {phone} = this.handleValidation(user);
+        error.phone = phone;
+        break;
+      default:
+        break;
     }
 
-    return null
+    this.setState({
+      error
+    })
   }
 
-  submitValue = (value) => {
-    // this.setState({
-    //   progress: 0,
-    //   isProgress: true,
-    // });
-    this.updateUserManagerAPI(value);
-    this.actionsAfterSubmit();
+  hideModal = (e) => {
+    this.props.hideModal();
+    this.isModified = false;
+    this.setState({
+      error: {}
+    })
   };
 
+  renderDepartmentSelect = (position) => {
+    let departmentSelect = <Select defaultValue="Vui lòng chọn vị trí"></Select>;
+    if(position){
+      departmentSelect = selectOptions.map((item, index) => {
+        return (
+          item.key === position && 
+            <Select 
+                name="department" 
+                disabled={position ? false : true}
+                value={this.state.user.department} 
+                onChange={(value) => this.handleOnChangeSelect("department", value)} key={index}
+              >
+                {item.value.map((subItem, index2) => (
+                      <Option key={index2} value={subItem}>{subItem}</Option>
+                ))}
+            </Select>
+          )
+      })
+    }
+    return departmentSelect
+  }
   // handleChange = (info) => {
   //   this.setState({
   //     selectedImg: URL.createObjectURL(info.file.originFileObj),
@@ -143,338 +244,187 @@ class UserManagerForm extends Component {
   //   }
   // };
 
-  // createUserManagerAPI = (value, paramAvatar) => {
-  //   const id = uuidv4();
-  //   const { createUserManagerRequest } = this.props.actions;
-  //   createUserManagerRequest({
-  //     userInfo: {
-  //       id: id,
-  //       name: value.name || "",
-  //       email: value.email || "",
-  //       position: value.position || "",
-  //       level: value.level || "",
-  //       major: value.major || "",
-  //       phone: value.phone || "",
-  //       avatarURL: paramAvatar,
-  //     },
-  //     callback: () => {
-  //       return Notifies.createSuccess();
-  //     },
-  //     fallback: () => {
-  //       return Notifies.errorMessege();
-  //     },
-  //   });
-  // }
-
-  updateUserManagerAPI = (value) => {
-    const { updateUserManagerRequest } = this.props.actions;
-    const {userInfo, userRole, userUID} = value;    
-    updateUserManagerRequest({
-      userInfo: {
-        name: userInfo.name || "",
-        email: userInfo.email || "",
-        position: userInfo.position || "",
-        major: this.state.major || "",
-        status: userInfo.status || "",
-        phone: userInfo.phone || "",
-      },
-      userRole: {
-        role: userRole.role || ""
-      },
-      userUID: userUID,
-      callback: () => {
-        return Notifies.updateSuccess();
-      },
-      fallback: () => {
-        return Notifies.errorMessege();
-      },
-    });
-  }
-
-  actionsAfterSubmit = () => {
-    // this.setState({
-    //   isProgress: false,
-    //   selectedImg: null,
-    //   imgInfo: null
-    // });
-    this.props.actions.hideModal(false);
-  }
-
-  handleOk = (e) => {
-    this.submitValue();
-  };
-
-  handleCancel = (e) => {
-    this.props.actions.hideModal(false);
-  };
-
-  handleSelectPositionChange = (value) => {
-    this.setState({
-      selectOptionType: value,
-      major: ""
-    }, () => this.validateFieldMajor(this.state.major)) 
-  }
-
-  handleSelectMajorChange = (value) => {
-    this.setState({
-      major: value
-    }, () => this.validateFieldMajor(this.state.major))
-  }
-
-  renderSelectFieldOptions = (selectOptionType) => {
-    let result = null;
-    result = changeOptions.map((item, index1) => {
-      if(selectOptionType === item.OptionType){
-        return <Select 
-                  getPopupContainer={trigger => trigger.parentNode} 
-                  key={index1} 
-                  onChange={this.handleSelectMajorChange} 
-                  defaultValue="Chuyên môn"  
-                  value={this.state.major}
-                >
-                    {item.OptionValue.map((value, index2) => {
-                      return <Option value={value} key={index2}>{value}</Option>
-                    })}
-              </Select>
-      }
-      else{
-        return null
-      }
-    })
-    return result
-  }
-
-  validateFieldMajor = (value) => {
-    if(value === "") {
-      this.setState({
-        validateMajor: true
-      })
-    } else{ 
-      this.setState({
-        validateMajor: false
-      })
-    }
-  }
   render() {
-    const { handleSubmit, isOpenModal, isAddUser, isLoading, userById } = this.props;
-    const { selectedImg, progress, isProgress } = this.state;
+    const { isOpen, popupName, popupProps, userToEdit } = this.props || {};
+    const {user, error} = this.state;
     return (
+      <div id="containerModal">
       <Modal
-        title={
-          isAddUser ? (
-            <h3 className="modal-title">Thêm mới user</h3>
-          ) : (
-            <h3 className="modal-title">Sửa thông tin user</h3>
-          )
-        }
-        visible={isOpenModal}
+        title={<h3 className="modal-title text-center">Cập nhật thông tin</h3>}
+        visible={popupName === "edit_user_form" && isOpen}
         closable={false}
-        onCancel={this.handleCancel}
-        style={{position: "relative"}}
+        onCancel={this.hideModal}
         width="700px"
         footer={[
           <Fragment key="modal-footer">
-            <Button type="default" onClick={this.handleCancel}>
+            <Button type="default" onClick={this.hideModal}>
               Đóng
             </Button>
             <Button
-              disabled={isProgress}
               form="myForm"
               key="submit"
               htmlType="submit"
               type="primary"
             >
-              {isAddUser ? "Thêm" : "Sửa"}
+              Sửa
             </Button>
           </Fragment>,
         ]}
       >
-      {
-        isLoading ? <div className="spin-icon-form"><Spin /></div> : null
-      }
-        <form onSubmit={handleSubmit(this.submitValue)} id="myForm">
-          <div className="row">
+        <form onSubmit={this.handleSubmit} className="row" id="myForm" >
             <div className="col-12 mb-2">
-              <div className="form-group row">
+              <div className="form-group d-flex">
                 <label
-                  className="col-2 py-1 text-right control-label font-weight-bold"
+                  className="col-3 py-1 text-right control-label font-weight-bold"
                   htmlFor="name"
                 >
-                  Tên* :
+                  Tên: 
                 </label>
-                <div className="col-10">
-                  <Field
-                    placeholder="Tên"
-                    name="userInfo.name"
-                    autoComplete="off"
-                    type="text"
-                    component={renderField}
-                  />
+                <div className="col-6" id="popoverContainer-name" style={{position: "relative"}}>
+                  <Popover 
+                    getPopupContainer={() => document.getElementById("popoverContainer-name")} 
+                    visible={error.name ? true : false} 
+                    content={"Tên phải dài hơn 5 ký tự và không có số"} 
+                    placement="rightTop"
+                  >
+                    <Input
+                      autoComplete="off"
+                      name="name" 
+                      value={user.name} 
+                      onChange={this.handleOnChangeInput}
+                      onClick={() => this.handleValidationOnChange("name", user)}
+                    />
+                  </Popover>
                 </div>
               </div>
             </div>
             <div className="col-12 mb-2">
-              <div className="form-group row">
+              <div className="form-group d-flex">
                 <label
-                  className="col-2 py-1 control-label text-right font-weight-bold"
+                  className="col-3 py-1 text-right control-label font-weight-bold"
+                  htmlFor="name"
+                >
+                  Phone: 
+                </label>
+                <div className="col-6" id="popoverContainer-phone">
+                  <Popover 
+                    getPopupContainer={() => document.getElementById("popoverContainer-phone")} 
+                    content="Số điện thoại không hợp lệ" 
+                    visible={error.phone ? true : false} 
+                    placement="right"
+                  >
+                    <Input
+                      ref={this.inputRef}
+                      name="phone" 
+                      value={user.phone} 
+                      onChange={this.handleOnChangeInput}
+                      onClick={() => this.handleValidationOnChange("phone", user)}
+                      
+                    />
+                  </Popover>
+                </div>
+              </div>
+            </div>
+            <div className="col-12 mb-2">
+              <div className="form-group d-flex">
+                <label
+                  className="col-3 py-1 control-label text-right font-weight-bold"
                   htmlFor="position"
                 >
-                  Vị trí* :
+                  Vị trí:
                 </label>
-                <div className="col-4">
-                  <Field
-                    name="userInfo.position"
-                    component={renderSelectField}
-                    onChange={this.handleSelectPositionChange}
+                <div className="col-6">
+                  <Select 
+                    name="position" 
+                    value={user.position} 
+                    onChange={(value) => this.handleOnChangeSelect("position", value)}
                   >
-                    <Option value="">Vị trí</Option>
                     <Option value="Quản lý">Quản lý</Option>
-                    <Option value="IT">IT</Option>
-                    <Option value="Tài chính">Tài chính</Option>
-                  </Field>
-                </div>
-                <label
-                      className="col-2 py-1 control-label text-right font-weight-bold"
-                      htmlFor="major"
-                    >
-                  Chính* :
-                </label>
-                <div   className="col-4">
-                    { this.state.selectOptionType ? this.renderSelectFieldOptions(this.state.selectOptionType) : <Select defaultValue="Vui lòng chọn vị trí"></Select>}
-                    {this.state.validateMajor ? <p className="text-danger font-size-14 mb-0">Chuyên môn bắt buộc</p> : null}
+                    <Option value="IT" >IT</Option>
+                    <Option value="Tài chính" >Tài chính</Option>
+                  </Select>
                 </div>
               </div>
             </div>
-            {/*<div className="col-12 mb-2">
-              <div className="form-group row">
-                <label
-                  className="col-2 control-label text-right font-weight-bold"
-                  htmlFor="level"
-                >
-                  Chuyên môn :
-                </label>
-                <div className="col-4">
-                  <Field
-                    name="level"
-                    component={renderSelectField}
-                  >
-                    <Option value="">Trình độ</Option>
-                    <Option value="internship">Internship</Option>
-                    <Option value="fresher">Fresher</Option>
-                    <Option value="junior">Junior</Option>
-                    <Option value="middle">Middle</Option>
-                    <Option value="senior">Senior</Option>
-                    <Option value="master">Master</Option>
-                  </Field>
-                </div>
-              </div>
-            </div>*/}
-            {/*<div className="col-12 mb-2">
-              <div className="form-group row">
-                <label
-                  className="col-2 text-right control-label font-weight-bold"
-                  htmlFor="major"
-                >
-                Chuyên môn :
-                </label>
-                <div className="col-10">
-                  <Field
-                    placeholder="Chuyên môn (Nhập rõ)"
-                    name="major"
-                    component={renderField}
-                />
-                </div>
-              </div>
-            </div>*/}
             <div className="col-12 mb-2">
-              <div className="form-group row">
+              <div className="form-group d-flex">
                 <label
-                  className="col-2 py-1 text-right control-label font-weight-bold"
+                  className="col-3 py-1 text-right control-label font-weight-bold"
                   htmlFor="role"
                 >
-                  Vai trò* :
+                  Department:
                 </label>
-                <div className="col-4">
-                  <Field
-                      name="userRole.role"
-                      component={renderSelectField}
-                  >
-                    <Option value="">Vai trò</Option>
-                    <Option value="user">Người dùng</Option>
-                    <Option value="admin">Quản trị viên</Option>
-                  </Field>
+                <div className="col-6">
+                    {this.renderDepartmentSelect(user.position)}
                 </div>
               </div>
             </div>
             <div className="col-12 mb-2">
-              <div className="form-group row">
+              <div className="form-group d-flex">
                 <label
-                  className="col-2 py-1 text-right control-label font-weight-bold"
+                  className="col-3 py-1 text-right control-label font-weight-bold"
                   htmlFor="role"
                 >
-                  Tình trạng* :
+                  Level:
                 </label>
-                <div className="col-4">
-                  <Field
-                      name="userInfo.status"
-                      component={renderSelectField}
-                  > 
-                    <Option value="">Chọn tình trạng</Option>
-                    <Option value={0}>Tạm nghỉ</Option>
-                    <Option value={1}>Đang hoạt động</Option>
-                  </Field>
+                <div className="col-6">
+                  <Select 
+                    name="level" 
+                    value={user.level} 
+                    onChange={(value) => this.handleOnChangeSelect("level", value)}
+                  >
+                    <Option value="Intern" >Intern</Option>
+                    <Option value="Fresher" >Fresher</Option>
+                    <Option value="Junior" >Junior</Option>
+                    <Option value="Middle" >Middle</Option>
+                    <Option value="Senior" >Senior</Option>
+                    <Option value="Master" >Master</Option>
+                  </Select>
                 </div>
               </div>
             </div>
             <div className="col-12 mb-2">
-              <div className="form-group row">
+              <div className="form-group d-flex">
                 <label
-                  className="col-2 py-1 text-right control-label font-weight-bold"
-                  htmlFor="phone"
+                  className="col-3 py-1 text-right control-label font-weight-bold"
+                  htmlFor="role"
                 >
-                  Điện thoại* :
+                  Role:
                 </label>
-                <div className="col-4">
-                  <Field
-                    placeholder="Số điện thoại"
-                    name="userInfo.phone"
-                    component={renderField}
-                    type="number"
-                    autoComplete="off"
+                <div className="col-6">
+                  <Select 
+                    name="role" 
+                    value={user.role} 
+                    onChange={(value) => this.handleOnChangeSelect("role", value)}
+                  >
+                    <Option value="user" >Người dùng</Option>
+                    <Option value="admin" >Quản trị viên</Option>
+                  </Select>
+                </div>
+              </div>
+            </div>
+            <div className="col-12 mb-2">
+              <div className="form-group d-flex">
+                <label
+                  className="col-3 py-1 text-right control-label font-weight-bold"
+                  htmlFor="role"
+                >
+                  Role:
+                </label>
+                <div className="col-6">
+                  <BeautyStars 
+                    maxStars={5} 
+                    value={user.rating} 
+                    inactiveColor="#121621"
+                    activeColor="#f28902"
+                    onChange={(value) => {
+                      this.isModified = true;
+                      this.setState({user: {...user, rating: value}})
+                    }} 
                   />
                 </div>
               </div>
             </div>
-            {/*<div className="col-12 mb-2">
-              <div className="form-group row">
-                <label
-                  className="col-2 text-right control-label font-weight-bold"
-                  htmlFor="avatar"
-                >
-                  Ảnh :
-                </label>
-                <div className="col-10 upload-btn-wrapper">
-                  <div className="col-4">
-                    <Upload
-                      name="avatar"
-                      listType="picture-card"
-                      className="avatar-uploader"
-                      showUploadList={false}
-                      onChange={this.handleChange}
-                    >
-                      <img
-                        alt="..."
-                        className="btn-upload"
-                        width="100%"
-                        src={selectedImg ? selectedImg : UserDefaultImage}
-                      />
-                      <span>{isAddUser ? "Cập nhật ảnh" : "Cập nhật lại ảnh"}</span>
-                    </Upload>
-                  </div>
-                </div>
-              </div>
-          </div>*/}
-          </div>
         </form>
         {/*
         {isProgress ? (
@@ -486,36 +436,9 @@ class UserManagerForm extends Component {
           ""
         )} */}
       </Modal>
+      </div>
+
     );
   }
 }
 // https://firebasestorage.googleapis.com/v0/b/accounting-806b6.appspot.com/o/images%2F20200417_052540.jpg?alt=media&token=cadc4bd1-1b76-4726-8c3f-8f03223ae866
-
-const mapStateToProps = (state) => {
-  return {
-    isOpenModal: state.modalPopupReducer.isOpenModal,
-    isAddUser: state.modalPopupReducer.isAddUser,
-    initialValues: state.userManagerReducer.userById,
-    userById: state.userManagerReducer.userById,
-    isLoading: state.userManagerReducer.isLoading,
-  };
-};
-const mapDispatchToProps = (dispatch) => {
-  return {
-    actions: bindActionCreators(
-      { ...ModalPopupActions, ...UserManagerActions },
-      dispatch
-    ),
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(
-  reduxForm({
-    form: "simple",
-    enableReinitialize: true,
-    validate,
-  })(UserManagerForm)
-);

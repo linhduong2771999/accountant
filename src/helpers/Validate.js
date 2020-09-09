@@ -36,3 +36,14 @@ export const validate = values => {
     }
     return errors
   }
+
+ export const validateName = (name) => {
+    var re = /^[a-zA-Z 'áàảãạâấầẩẫậăắằẳẵặđíìỉĩịóòỏõọơớờởỡợôốồổỗộéèẻẽẹêếềểễệúùủũụưứừửữựýỳỷỹỵÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶĐÍÌỈĨỊÓÒỎÕỌƠỚỜỞỠỢÔỐỒỔỖỘGGÉÈẺẼẸÊẾỀỂỄỆÚÙỦŨỤƯỨỪỬỮỰÝỲỶỸỴ]*$/
+    // console.log(re.test(name));
+    return re.test(name) && String(name).length > 5;
+}
+
+const validateNumber = (text) => {
+  var re = /^[0123456789]*$/
+  return re.test(text)
+}

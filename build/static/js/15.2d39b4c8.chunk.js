@@ -1,2 +1,0 @@
-(this.webpackJsonpaccountant=this.webpackJsonpaccountant||[]).push([[15],{815:function(t,n,e){"use strict";e.r(n);var a=e(44),c=e(45),r=e(47),u=e(46),o=e(48),i=e(0),s=e.n(i),b=function(t){function n(){return Object(a.a)(this,n),Object(r.a)(this,Object(u.a)(n).apply(this,arguments))}return Object(o.a)(n,t),Object(c.a)(n,[{key:"render",value:function(){return s.a.createElement(i.Fragment,null,"Trang th\xf4ng b\xe1o, xem t\u1ea5t c\u1ea3 th\xf4ng b\xe1o t\u1ea1i \u0111\xe2y !!!")}}]),n}(i.Component);n.default=b}}]);
-//# sourceMappingURL=15.2d39b4c8.chunk.js.map

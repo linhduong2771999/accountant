@@ -1,23 +1,22 @@
 @import "../../../assets/scss/constants/variables.constant.scss";
 @import "../../../assets/scss/constants/responsive.constant.scss";
-.logo-user {
-  width: 100%;
-  padding: 5% 10% 5% 10%;
-  font-size: 0.9em;
-  color: $text-color-white;
+.user-intro{
   display: flex;
-  flex-direction: row;
-  .user-name {
-    display: flex;
-    flex-direction: column;
-    margin-left: 10px;
-    p {
-      margin-bottom: 0;
-      letter-spacing: 1px;
-      color: #2e97f8;
-      &:hover{
-        cursor: pointer;
-      }
+  padding: .75rem 1rem;
+  &_logo{
+    width: 30%;
+    text-align: center;
+  }
+  &_info{
+    width: 70%;
+    color: white;
+    margin-left: .25rem;
+    &_welcome > span {
+        font-size: 12px;
+    }
+    &_name{
+      cursor: pointer;
+      color: $text-color-blue;
     }
   }
 }
@@ -31,7 +30,6 @@
   }
 }
 
-
 // .profile-pic {
 //   float: left;
 //   width: 250px;
@@ -40,6 +38,6 @@
 //   @include respond-to(wide-screens) { float: none; }
 // }
 
-.ant-tooltip {
-  position: fixed;
-}
+// .ant-tooltip {
+//   position: fixed;
+// }
