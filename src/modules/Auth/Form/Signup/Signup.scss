@@ -1,0 +1,16 @@
+.signup-form{
+    display: none;
+    .member-aria{
+        text-align: center;
+        font-size: 14px;
+        margin: 0;
+        .member-link{
+            color: #1890ff;
+            font-weight: bold;
+            margin-right: .5rem; 
+            i {
+                margin-right: .25rem;
+            }
+        }
+    }
+}

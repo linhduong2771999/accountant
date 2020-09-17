@@ -3,3 +3,19 @@
     float: right;
     padding-top: 0;
 }
+
+.ant-page-header-heading{
+    overflow: inherit;
+    .header-heading-extra_name{
+        position: relative;
+        &::after{
+            content: "";
+            vertical-align: middle;
+            display: inline-block;
+            margin-left: 1rem;
+            width: 1px;
+            height: 50%;
+            background-color: #ccc;
+        }
+    }
+}

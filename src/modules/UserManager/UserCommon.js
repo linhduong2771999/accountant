@@ -5,11 +5,8 @@ import { bindActionCreators } from "redux";
 import { UserManagerActions, ModalPopupActions } from "../../actions/index";
 import { createLoadingSelector } from "../../helpers/loadingSelector";
 import * as Notifies from "../../components/Notifies/Notifies";
-import UserManagerForm from "./UserManagerForm/UserManagerForm";
 import SearchControl from "../../components/SearchControl/SearchControl";
-import MainTable from "./components/DataTable/MainTable";
 import ExtraTable from "./components/DataTable/ExtraTable";
-import LockFeatureModal from "./components/Modal/LockFeature_Modal";
 // import CSVDownload from "../../components/CSVDownload/CSVDownload";
 
 class UserManager extends Component {
@@ -33,36 +30,6 @@ class UserManager extends Component {
     this.props.actions.getUser_from_UserManagerRequest(body);
   }
 
-  handleUpdateUser = async (id) => {
-    try{
-      const {usersList: {usersListTable}} = this.props.stateOfUserManager;
-      const temp = usersListTable.filter(item => item.id === id);
-      this.setState({
-        userToEdit: temp[0]
-      }, () => this.props.actions.openModal({popupName: "edit_user_form", popupProps: null}))
-    } catch(error) {
-      Notifies.errorMessege("Thao tác không thành công", "Vui lòng thử lại trong chốc lát!", "error")
-    }
-  }
-
-  handleDeleteUser = async (id, record) => {
-    try{
-      const {pagination, searchText } = this.props.stateOfUserManager;
-      const body = {
-        id,
-        page: pagination.currentPage,
-        limit: 5,
-        callBack: () => {
-          Notifies.deleteSuccess();
-          this.props.actions.getUser_from_UserManagerRequest({page: pagination.currentPage, limit: 5, search: searchText});
-        },
-        fallBack: (error) => Notifies.errorMessege(error.message, error.text, error.icon)
-      }
-      Notifies.deleteAction(() => this.props.actions.deleteUser_from_UserManagerRequest(body), record.name);
-    } catch(error) {
-      Notifies.errorMessege("Thao tác không thành công", "Vui lòng thử lại trong chốc lát!", "error")
-    }
-  }
 
   handleTableChange = (pagination, filters, sorter, extra) => {
     try{
@@ -93,10 +60,6 @@ class UserManager extends Component {
     }
   }
 
-  handleLockedAccount = (isLock, record) => {
-    this.props.actions.openModal({popupName: "lock_user_feature", popupProps: {isLock, record}});
-  }
-  
   render() {
     const {
       pagination,
@@ -104,24 +67,7 @@ class UserManager extends Component {
     } = this.props.stateOfUserManager;
     const { isOpen, popupName, popupProps } = this.props.stateOfModalPopup;
     const { loadingTable, loadingSuggestionForm } = this.props;
-    console.log("User Manager");
-    const menuData = [
-      {
-        title: "Bảng chính"
-      },
-      {
-        title: "Bảng chi tiết"
-      }
-    ];
-    const menu = (
-      <Menu>
-        {menuData.map((item, index) => (
-          <Menu.Item key={index}>
-            <span onClick={() => this.handleSwitchTable(item.title)}>{item.title}</span>
-          </Menu.Item>
-          ))}
-      </Menu>
-    );
+
     return (
       <Fragment>
         <Row gutter={[0, { xs: 32, sm: 32, md: 32, xl: 32 }]}>
@@ -137,9 +83,6 @@ class UserManager extends Component {
           </Col>
           <Col xs={24} sm={24} md={16} lg={8} xl={14}>
             <Row type="flex" justify="end">
-            <Dropdown overlay={menu} trigger={['click']}>
-              <Button  type="primary">{this.state.dropdownItemTitle} <Icon type="menu-fold" /></Button>
-            </Dropdown>
               {
                 /*
                 <CSVDownload userList={userList} />
@@ -148,43 +91,14 @@ class UserManager extends Component {
             </Row>
           </Col>
         </Row>
-        {this.state.dropdownItemTitle === "Bảng chính" 
-          ? 
-            <MainTable 
-              usersListTable={usersListTable}
-              loadingTable={ loadingTable }
-              pagination={pagination}
-              handleTableChange={this.handleTableChange}
-              handleUpdateUser={this.handleUpdateUser}
-              handleDeleteUser={this.handleDeleteUser}
-              handleLockedAccount={this.handleLockedAccount}
-              history={this.props.history}
-            />
-          :
-          <ExtraTable 
+
+        <ExtraTable 
             usersListTable={usersListTable}
             loadingTable={ loadingTable }
             pagination={pagination}
             handleTableChange={this.handleTableChange}
-            handleDeleteUser={this.handleDeleteUser}
-            handleLockedAccount={this.handleLockedAccount}
             history={this.props.history}
-          />
-      }
-        <LockFeatureModal  
-          isOpen={isOpen} 
-          popupName={popupName} 
-          popupProps={popupProps}
-          hideModal={this.props.actions.hideModal}
-          handlelockedAccount_from_UserManagerRequest={this.props.actions.handlelockedAccount_from_UserManagerRequest}
-        />
-        <UserManagerForm 
-          isOpen={isOpen} 
-          popupName={popupName} 
-          popupProps={popupProps}
-          hideModal={this.props.actions.hideModal}
-          userToEdit={this.state.userToEdit}
-          updateUser_from_UserManagerRequest={this.props.actions.updateUser_from_UserManagerRequest}
+            displayExtraButton={false}
         />
       </Fragment>
     );

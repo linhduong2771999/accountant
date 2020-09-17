@@ -1,9 +1,17 @@
-import React from 'react';
+import React, { Component } from 'react';
 import 'antd/dist/antd.css';
 import "./assets/scss/App.scss";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import "react-datepicker/dist/react-datepicker.css";
-import AppIndex from "./modules/App/App";
+import RouterIndex  from "./routers/index";
+import LoadingPageStatus from "./components/LoadingPageIcon/LoadingPageIcon";
+import * as Notifies from "./components/Notifies/Notifies";
+import { connect } from "react-redux";
+import { bindActionCreators} from "redux";
+import { AuthActions } from "./actions/index";
+import { createLoadingSelector } from "./helpers/loadingSelector";
+import { removeCookies } from "./utils/cookies";
+
 import moment from "moment";
 moment.locale('vi', {
   months : 'Tháng 1_Tháng 2_Tháng 3_Tháng 4_Tháng 5_Tháng 6_Tháng 7_Tháng 8_Tháng 9_Tháng 10_Tháng 11_Tháng 12'.split('_'),
@@ -65,12 +73,34 @@ moment.locale('vi', {
       doy : 4  // Used to determine first week of the year.
   }
 });
-function App(props) {
-  return (
-    <div >
-        <AppIndex children={props.children} />
-    </div>
-  );
+class App extends Component {
+
+    UNSAFE_componentWillMount() {
+        const body =  {
+            fallBack: () => {
+                Notifies.errorMessege("Lỗi", "Tài khoản của bạn đang tạm thời bị khóa. Vui lòng liên hệ lại quản trị viên!", "error");
+                removeCookies({name: "user_token"});
+            }
+        }
+        this.props.actions.checkLoggedInAccountRequest(body);
+    }
+    render(){
+        if(this.props.loadingStatus) return <LoadingPageStatus />;
+        return <div>{RouterIndex}</div>
+    }
 }
 
-export default App;
+const mapStateToProps = (state) => {
+    return {
+        stateOfAuthReducer: state.authReducers,
+        loadingStatus: createLoadingSelector(["CHECK_LOGGED_IN_ACCOUNT"])(state)
+    }
+} 
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        actions: bindActionCreators({ ...AuthActions }, dispatch)
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

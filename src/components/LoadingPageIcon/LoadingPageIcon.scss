@@ -1,0 +1,22 @@
+.loading-page-status{
+    background-color: rgba(177, 193, 221, 0.111);
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    .loading-content{
+        font-size: 100px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #1890ff;
+        text-align: center;
+        z-index: 1000;
+        box-sizing: border-box;
+        > p{
+            font-size: 30px;
+            margin: 0;
+            margin-bottom: -20px;
+        }
+    }
+}

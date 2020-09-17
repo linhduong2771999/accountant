@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import {withRouter, Link } from "react-router-dom";
 import { Layout, Menu, Icon, Avatar, Tooltip } from "antd";
-
+import { connect } from "react-redux";
+import { compose } from "redux";
 const { Sider } = Layout;
 const { SubMenu } = Menu;
 
@@ -58,7 +59,7 @@ class Sidebar extends Component {
   render() {
     const { collapsed, isOpenTooltip } = this.state;
     const {location} = this.props;
-    const { userInfo, userRole } = this.props.userProfile;
+    const { currentUser } = this.props.stateOfAuthReducer;
   //   <div
   //   className="logo-user"
   //   style={{ justifyContent: collapsed ? "center" : "" }}
@@ -103,12 +104,9 @@ class Sidebar extends Component {
               <div className="user-intro_info_welcome">
                   <span>Welcome,</span>
               </div>
-              <Tooltip style={{position: "fixed", zIndex: "10"}} onVisibleChange={this.onVisibleChange} visible={isOpenTooltip} placement="right" title={settingIcon}>
-                <div className="user-intro_info_name">
-                    <span>Chào Dương</span>
-                    <Icon type="right" style={{ fontSize: "10px", marginLeft: ".25rem" }} />
-                </div>
-              </Tooltip>
+              <div className="user-intro_info_name">
+                  <span>Chào {currentUser.name || "mừng"}</span>
+              </div>
           </div>
         </div>
       )}
@@ -134,30 +132,33 @@ class Sidebar extends Component {
               <span>Bảng điều khiển  </span>
             </Link>
           </Menu.Item>
-            <SubMenu
-              key="sub1"
-              title={
-                <span>
-                  <Icon type="user" />
-                  <span>Quản trị viên</span>
-                </span>
-              }
-            >
-              <Menu.Item key="/accounting">
-                <Link to="/accounting">Quản lý kế toán</Link>
-              </Menu.Item>
-              <Menu.Item key="/user_manager">
-                <Link to="/user_manager">Quản lý người dùng</Link>
-              </Menu.Item>
-              <Menu.Item key="/work_manager">
-                <Link to="/work_manager">Quản lý công việc</Link>
-              </Menu.Item>
-              <Menu.Item key="/notification_manager">
-                <Link to="/notification_manager">Quản lý thông báo</Link>
-              </Menu.Item>
-            </SubMenu>
-          <Menu.Item key="/user_list">
-            <Link to="/user_list">
+            {
+              currentUser.role === "admin" &&
+              <SubMenu
+                key="sub1"
+                title={
+                  <span>
+                    <Icon type="user" />
+                    <span>Quản trị viên</span>
+                  </span>
+                }
+              >
+                <Menu.Item key="/accounting">
+                  <Link to="/accounting">Quản lý kế toán</Link>
+                </Menu.Item>
+                <Menu.Item key="/user_manager">
+                  <Link to="/user_manager">Quản lý người dùng</Link>
+                </Menu.Item>
+                <Menu.Item key="/work_manager">
+                  <Link to="/work_manager">Quản lý công việc</Link>
+                </Menu.Item>
+                <Menu.Item key="/notification_manager">
+                  <Link to="/notification_manager">Quản lý thông báo</Link>
+                </Menu.Item>
+              </SubMenu>
+            }
+          <Menu.Item key="/user_common">
+            <Link to="/user_common">
               <Icon type="team" />
               <span>Danh sách nhân viên</span>
             </Link>
@@ -174,4 +175,13 @@ class Sidebar extends Component {
   }
 }
 
-export default withRouter(Sidebar);
+const mapStateToProps = (state) => {
+  return {
+    stateOfAuthReducer: state.authReducers
+  }
+}
+
+export default compose(
+  withRouter,
+  connect(mapStateToProps, null)
+)(Sidebar)

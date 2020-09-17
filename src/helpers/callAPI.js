@@ -1,4 +1,6 @@
 import axios from "axios";
+// import Cookies from 'js-cookie';
+import { getCookies } from "../utils/cookies";
 const backupAPI = `https://accounting-806b6.firebaseio.com/${""}.json?auth=aMW7qulLyOD0hkmWzHOsaP13yxeXQYjjkWoIH2k5`;
 export default function callAPI(
   type,
@@ -9,9 +11,8 @@ export default function callAPI(
   header = {
       Accept: "application/json",
       "Content-Type": "application/json",
-      "cache-control":
-      "no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
-      // "Authorization": `Bearer ${accessToken}`,
+      "cache-control": "no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+      "authorization": `Bearer ${getCookies({name: "user_token"})}`,
     }
 ) {
   return new Promise((resolve, reject) => {
@@ -20,9 +21,10 @@ export default function callAPI(
        url: `http://127.0.0.1:8000/api/v1/${endpoint}`,
        method,
        headers: header,
-       data: body
+       data: body,
      })
        .then(response => {
+         console.log(response);
          resolve(response);
        })
        .catch(error => {

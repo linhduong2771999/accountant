@@ -19,11 +19,11 @@ export default class LockFeatureModal extends Component {
 
     handleSubmit = async ({isLock, record}) => { 
         try{
-            this.props.hideModal();
             switch (isLock) {
                 case "lock":
                     if(this.handleValidation(this.state.accountLockedUntil)){
                         this.handleLockedAccount(isLock, record)
+                        this.props.hideModal();
                     } else {
                         this.setState({
                             error: "Vui lòng chọn ngày"
@@ -31,8 +31,11 @@ export default class LockFeatureModal extends Component {
                     }
                     break;
                 case "unlock":
-                    this.handleLockedAccount(isLock, record)
+                    this.props.hideModal();
+                    this.handleLockedAccount(isLock, record);
+                    break;
                 default:
+                    // return ""
                     break;
             }
         } catch(error){
@@ -82,6 +85,7 @@ export default class LockFeatureModal extends Component {
         const { isOpen, popupName, popupProps } = this.props;
         const isLock = !isEmpty(popupProps) && popupProps.isLock;
         const record = !isEmpty(popupProps) && popupProps.record;   
+        console.log(this.state.accountLockedUntil);
         return (
             <Modal     
                 className="lock_user"
