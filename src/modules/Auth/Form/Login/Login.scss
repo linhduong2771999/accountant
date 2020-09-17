@@ -1,0 +1,22 @@
+.login-form{
+    display: block;
+    .register-aria{
+        text-align: center;
+        font-size: 14px;
+        margin: 0;
+        .register-link{
+            color: #1890ff;
+            font-weight: bold;
+            margin-left: .5rem;
+            position: relative;
+            i {
+                margin-left: .25rem;
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+        }
+    }
+}
+
+

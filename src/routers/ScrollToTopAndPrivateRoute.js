@@ -1,40 +1,51 @@
 import React, { Component } from 'react';
-import {Redirect, Route} from "react-router-dom";
-import {firebase} from "../config/FirebaseClient"
-import {withRouter} from "react-router-dom";
-import * as storeService from "../sagas/storeService";
+import { connect } from "react-redux";
+import { compose , bindActionCreators} from "redux";
+import {Redirect, Route, withRouter} from "react-router-dom";
+import { AuthActions } from "../actions/index";
 class ScrollToTopAndPrivateRoute extends Component {
-    componentDidUpdate(prevProps) {
-        if (
-          this.props.path === this.props.location.pathname &&
-          this.props.location.pathname !== prevProps.location.pathname
-        ) {
-          // content.scrollTop = 0;
-          window.scrollTo(0, 0);
-        }
+  componentDidUpdate(prevProps) {
+      if (
+        this.props.path === this.props.location.pathname &&
+        this.props.location.pathname !== prevProps.location.pathname
+      ) {
+        // content.scrollTop = 0;
+        window.scrollTo(0, 0);
       }
-    render() {
-        const {component: Component, ...rest} = this.props;
-        var user = firebase.auth().currentUser;
-        const {authReducers} = storeService.getGlobalState();
-        // console.log(isAuthenticated[0].isAuthenticated);
-        // console.log(authReducers.isAuthenticated);
-        const userUID = localStorage.getItem("userUID");
-        // console.log(JSON.parse(userUID));
-        
-        return (
-          <Route {...rest} render={(props) => (
-            // user !== null
-            JSON.parse(userUID) !== null
-            // isAuthenticated[0].isAuthenticated
-                  ? <Component {...props} />
-                  : <Redirect to={{
-                      pathname: '/login',
-                      state: { from: props.location }
-                    }} />
-              )} />
-        );
-    }
+  }
+
+
+
+  render() {
+    // console.log(this.props.stateOfAuthReducer);
+    const { isAuthenticated, currentUser } = this.props.stateOfAuthReducer;
+      const {component: Component, ...rest} = this.props;
+      return (
+        <Route {...rest} render={(props) => (
+          isAuthenticated && currentUser.role === "admin"
+                ? <Component {...props} />
+                : <Redirect to={{
+                    pathname: '/auth',
+                    state: { from: props.location }
+                  }} />
+            )} />
+      );
+  }
 }
 
-export default withRouter(ScrollToTopAndPrivateRoute);
+const mapStateToProps = (state) => {
+  return {
+    stateOfAuthReducer: state.authReducers
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    actions: bindActionCreators({ ...AuthActions }, dispatch)
+  }
+} 
+
+export default compose(
+  withRouter,
+  connect(mapStateToProps, mapDispatchToProps)
+)(ScrollToTopAndPrivateRoute)

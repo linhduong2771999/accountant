@@ -11,7 +11,9 @@ export default class ExtraTable extends Component {
       usersListTable, 
       handleTableChange,
       pagination, 
-      handleDeleteUser 
+      handleDeleteUser,
+      handleLockedAccount,
+      history 
     } = this.props;
         
     const columns = [
@@ -86,7 +88,7 @@ export default class ExtraTable extends Component {
           title: "Tác vụ",
           dataIndex: "id",
           width: 170,
-          render: (id) => actionsColumn(id)
+          render: (id, record) => actionsColumn(id, record)
         },
       ];
       const actionsColumnData = [
@@ -101,38 +103,64 @@ export default class ExtraTable extends Component {
           title: "Chi tiết", 
           icon: "info-circle",
           type: "default",
-          action: () => {},
+          action: () => history.push("/user_detail"),
           style: { marginRight: ".25rem" }
         },
+        this.props.displayExtraButton &&
         {
           title: "Khóa", 
           icon: "lock", 
           type: "danger",
-          action: () => {}, 
+          action: ({isLock, record}) => handleLockedAccount(isLock, record), 
           style: { marginRight: ".25rem" }
         },
+        this.props.displayExtraButton &&
         {
           title: "Xóa", 
           icon: "delete", 
-          action: ({id}) => handleDeleteUser(id), 
+          action: ({id, record}) => handleDeleteUser(id, record), 
           type: "danger"
         },
       ]
-      const actionsColumn = (id) => (
-        <Fragment>
-          {actionsColumnData.map((item, index) => (
-            <Tooltip key={index} placement="top" title={item.title}>
-              <Button
-                style={item.style}
-                icon={item.icon}
-                size="small"
-                type={item.type}
-                onClick={() => item.action({id})}
-              />
-            </Tooltip>
-          ))}
-        </Fragment>
-      );
+      console.log(actionsColumnData);
+      const actionsColumn = (id, record) => {
+        const isLock = (record.active ? "lock" : "unlock");
+
+       return this.props.displayExtraButton ? // for admin
+              actionsColumnData.map((item, index) => (
+                  <Tooltip 
+                    key={index} 
+                    placement="top" 
+                    title={item.icon === "lock" ? (record.active ? "Khóa" : "Mở khóa") : item.title}
+                  >
+                    <Button
+                      style={item.style}
+                      disabled={record.active ? false : (item.icon === "lock" ? false : true)}
+                      icon={item.icon === "lock" ? isLock : item.icon}
+                      size="small"
+                      type={item.type}
+                      onClick={() => item.action({id, record, isLock })} // Objects use for each function
+                    />
+                  </Tooltip>
+              ))
+            : // for common
+            actionsColumnData.map((item, index) => (
+              item && 
+              <Tooltip 
+                key={index} 
+                placement="top" 
+                title={item.title}
+              >
+                <Button
+                  style={item.style}
+                  icon={item.icon}
+                  size="small"
+                  type={item.type}
+                  onClick={() => item.action({id, record })} // Objects use for each function
+                />
+              </Tooltip>
+          ))
+      };
 
         return (
             <Table

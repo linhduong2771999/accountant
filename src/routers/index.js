@@ -1,14 +1,14 @@
 import React, { Suspense, lazy } from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import App from "../App";
+import AppIndex from "../modules/App/App";
 import ScrollToTopAndPrivateRoute from "../routers/ScrollToTopAndPrivateRoute";
-import Login from "../modules/Login/Login";
-
+import Auth from "../modules/Auth/Auth";
 
 import * as path from "./path";
 import { AnimatedSwitch, spring } from "react-router-transition";
 const Accounting = lazy(() => import("../modules/Accounting/Accounting"));
-const UserList = lazy(() => import("../modules/UserList/UserList"));
+const UserCommon = lazy(() => import("../modules/UserManager/UserCommon"));
 const UserManager = lazy(() => import("../modules/UserManager/UserManager"));
 const PageNotFound = lazy(() => import("../modules/PageNotFound/PageNotFound"));
 const Dashboard = lazy(() => import("../modules/Home/Dashboard"));
@@ -16,7 +16,7 @@ const WorkManager = lazy(() => import("../modules/WorkManager/WorkManager"));
 const Notification = lazy(() => import("../modules/Notification/Notification"));
 const NotificationManager = lazy(() => import("../modules/NotificationManager/NotificationManager"));
 const UserDetail = lazy(() => import("../modules/UserDetail/UserDetail"));
-// const Login = lazy(() => import("../modules/Login/Login"));
+// const Auth = lazy(() => import("../modules/Auth/Auth"));
 
 function mapStyles(styles) {
   return {
@@ -84,15 +84,19 @@ const bounceTransition = {
 const RouterIndex = (
   <BrowserRouter>
     <Switch>
-          <App>
+          <Route exact path="/auth" component={Auth} />
+          <AppIndex>
               <Suspense fallback={<div>Loading...</div>}>
                 <Route exact path={path.home} component={Dashboard} />
-                <Route exact path={path.userManager} component={UserManager} />
+                <Route exact path={path.userCommon} component={UserCommon} />
+                <ScrollToTopAndPrivateRoute exact path={path.accounting} component={Accounting} />
+                <ScrollToTopAndPrivateRoute exact path={path.userManager} component={UserManager} />
+                <ScrollToTopAndPrivateRoute exact path={path.workManager} component={WorkManager} />
+                <ScrollToTopAndPrivateRoute exact path={path.notification} component={Notification} />
               </Suspense>
-          </App>
+          </AppIndex>
     </Switch>
   </BrowserRouter>
 );
 
-// <Route exact path={path.userList}  component={UserList} />
 export default RouterIndex;

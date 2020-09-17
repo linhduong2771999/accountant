@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Redirect  } from "react-router-dom";
 import { Button, Tooltip, Tag } from "antd";
 import Table from "../../../../components/Table/Index";
 import UserImage from "../../../../assets/img/userImage.png";

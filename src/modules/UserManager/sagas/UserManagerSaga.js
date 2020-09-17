@@ -51,7 +51,7 @@ function* handle_Update_from_UserManagerRequest(action){
 function* handle_DeleteUser_from_UserManagerRequest(action){
     const  {id, page, limit, callBack, fallBack}  = action.payload;    
     try{
-        const {data, statusText} = yield call(UserManagerAPI.deleteUser_from_UserManager, {id, page, limit}); // id   
+        const {data, statusText} = yield call(UserManagerAPI.deleteUser_from_UserManager, {id, page, limit}); 
         if(statusText === "OK"){
             yield put(UserManagerActions.deleteUser_from_UserManagerSuccess({data, id}));
             callBack && callBack();

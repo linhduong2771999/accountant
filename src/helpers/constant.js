@@ -5,6 +5,8 @@ const UPDATE = "Cập nhật";
 const DELETE = "Xóa";
 const LOCK = "Khóa";
 const UNLOCK = "Mở Khóa";
+const LOGIN = "Đăng nhập"
+const SIGNUP = "Đăng ký"
 // Modal
 const LIST = "Danh sách";
 const USER = "Người dùng";
@@ -16,7 +18,9 @@ const TYPE = {
     UPDATE,
     DELETE,
     LOCK,
-    UNLOCK
+    UNLOCK,
+    LOGIN,
+    SIGNUP
 }
 
 const MODAL = {

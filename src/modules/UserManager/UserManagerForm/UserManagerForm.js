@@ -124,8 +124,8 @@ export default class UserManagerForm extends Component {
       } else if(!this.isModified) {
         alert("Bạn chưa sửa gì cả!")
       } else {
-        this.props.updateUser_from_UserManagerRequest(body)
         this.props.hideModal();
+        this.props.updateUser_from_UserManagerRequest(body)
       }
 
     } catch (error){
@@ -304,7 +304,7 @@ export default class UserManagerForm extends Component {
                   className="col-3 py-1 text-right control-label font-weight-bold"
                   htmlFor="name"
                 >
-                  Phone: 
+                  Điện thoại: 
                 </label>
                 <div className="col-6" id="popoverContainer-phone">
                   <Popover 
@@ -352,7 +352,7 @@ export default class UserManagerForm extends Component {
                   className="col-3 py-1 text-right control-label font-weight-bold"
                   htmlFor="role"
                 >
-                  Department:
+                  Chính:
                 </label>
                 <div className="col-6">
                     {this.renderDepartmentSelect(user.position)}
@@ -365,7 +365,7 @@ export default class UserManagerForm extends Component {
                   className="col-3 py-1 text-right control-label font-weight-bold"
                   htmlFor="role"
                 >
-                  Level:
+                  Trình độ:
                 </label>
                 <div className="col-6">
                   <Select 
@@ -389,7 +389,7 @@ export default class UserManagerForm extends Component {
                   className="col-3 py-1 text-right control-label font-weight-bold"
                   htmlFor="role"
                 >
-                  Role:
+                  Vai trò:
                 </label>
                 <div className="col-6">
                   <Select 
@@ -409,7 +409,7 @@ export default class UserManagerForm extends Component {
                   className="col-3 py-1 text-right control-label font-weight-bold"
                   htmlFor="role"
                 >
-                  Role:
+                  Đánh giá:
                 </label>
                 <div className="col-6">
                   <BeautyStars 

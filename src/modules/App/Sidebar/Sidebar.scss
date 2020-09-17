@@ -30,6 +30,14 @@
   }
 }
 
+.user-intro_info_name{
+  display: inline-block;
+  width: 115px;
+  white-space: nowrap;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
+}
+
 // .profile-pic {
 //   float: left;
 //   width: 250px;

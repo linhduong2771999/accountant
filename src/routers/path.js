@@ -1,6 +1,6 @@
 export const home = "/";
 export const accounting = "/accounting";
-export const userList = "/user_list";
+export const userCommon = "/user_common";
 export const userDetail = "/user_detail/:id";
 export const userManager = "/user_manager";
 export const workManager = "/work_manager";

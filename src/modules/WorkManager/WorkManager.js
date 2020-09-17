@@ -414,6 +414,7 @@ class WorkManager extends Component {
 
     renderTaskList = taskList.slice(startIndex, endIndex + 1)
     
+    console.log("Work manager");
     return (
       <Fragment>
         <Row gutter={[0, { xs: 32, sm: 32, md: 32, xl: 32 }]}>

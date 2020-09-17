@@ -1,13 +1,13 @@
 import { all, fork } from "redux-saga/effects";
 import { flatten } from 'lodash/array';
 import { values } from 'lodash/object';
-import AuthSaga from "../modules/Login/sagas/authSaga";
+import AuthSaga from "../modules/Auth/sagas/authSaga";
 import UserManagerSaga from "../modules/UserManager/sagas/UserManagerSaga";
 import UserListSaga from "../modules/UserList/sagas/UserListSaga";
 import WorkManagerSaga from "../modules/WorkManager/sagas/WorkManagerSaga";
 import UserDetail from "../modules/UserDetail/sagas/UserDetailSaga";
 const sagaList = [
-    // AuthSaga,
+    AuthSaga,
     UserManagerSaga,
     // UserListSaga,
     // WorkManagerSaga,
